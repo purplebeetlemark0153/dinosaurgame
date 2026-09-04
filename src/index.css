@@ -1,0 +1,8 @@
+@import "tailwindcss";
+
+@layer utilities {
+  .fossil-texture {
+    background-image: radial-gradient(#E8DCC4 2px, transparent 2px);
+    background-size: 24px 24px;
+  }
+}

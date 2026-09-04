@@ -1,0 +1,1848 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>立體影片《恐龍的秘密》- 史前霸主互動巡禮</title>
+  <meta name="description" content="立體影片《恐龍的秘密 The great dinosaur》專屬互動探索遊戲，包含小盜龍禦寒、翼龍空戰、滄龍深海捕食及霸王龍伏擊美頜龍。" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            dino: {
+              cream: '#FAF3E0',
+              sand: '#D9B99B',
+              olive: '#6E7B36',
+              moss: '#8B9A46',
+              bark: '#4A3728',
+              orange: '#E67E22',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- React 18 & Babel Standalone -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,700;0,800;1,600&family=Noto+Sans+TC:wght@400;600;700;900&display=swap');
+
+    body {
+      font-family: 'Plus Jakarta Sans', 'Noto Sans TC', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #1c1917;
+      color: #4A3728;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+
+    .fossil-texture {
+      background-image: radial-gradient(#6E7B36 0.75px, transparent 0.75px), radial-gradient(#D9B99B 0.75px, #FAF3E0 0.75px);
+      background-size: 30px 30px;
+      background-position: 0 0, 15px 15px;
+    }
+
+    @keyframes floatUpFade {
+      0% { opacity: 1; transform: translate(-50%, -50%) translateY(0) scale(0.9); }
+      50% { transform: translate(-50%, -50%) translateY(-24px) scale(1.1); }
+      100% { opacity: 0; transform: translate(-50%, -50%) translateY(-48px) scale(1); }
+    }
+
+    .animate-float-text {
+      animation: floatUpFade 0.85s ease-out forwards;
+      pointer-events: none;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { filter: drop-shadow(0 0 15px rgba(251, 191, 36, 0.7)); }
+      50% { filter: drop-shadow(0 0 30px rgba(251, 191, 36, 1)); }
+    }
+
+    .animate-glow {
+      animation: pulseGlow 2s infinite ease-in-out;
+    }
+  </style>
+</head>
+<body class="w-screen h-screen overflow-hidden flex items-center justify-center p-0 sm:p-2 bg-stone-900">
+  <div id="root" class="w-full h-full max-w-5xl max-h-[860px] bg-[#FAF3E0] sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col relative border-0 sm:border-4 border-[#D9B99B]"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef, useCallback } = React;
+
+    // ==========================================
+    // 🔊 1. Web Audio API Synthesizer Controller
+    // ==========================================
+    class SoundController {
+      constructor() {
+        this.ctx = null;
+        this.enabled = true;
+      }
+
+      initCtx() {
+        if (!this.ctx) {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContextClass();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      playFeatherCollect() {
+        if (!this.enabled) return;
+        this.initCtx();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(523.25, now);
+        osc.frequency.exponentialRampToValueAtTime(1046.5, now + 0.15);
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.2);
+      }
+
+      playEat() {
+        if (!this.enabled) return;
+        this.initCtx();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(300, now);
+        osc.frequency.exponentialRampToValueAtTime(600, now + 0.08);
+        gain.gain.setValueAtTime(0.35, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.12);
+      }
+
+      playWaterSplash() {
+        if (!this.enabled) return;
+        this.initCtx();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(400, now);
+        osc.frequency.exponentialRampToValueAtTime(200, now + 0.15);
+        gain.gain.setValueAtTime(0.25, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.18);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.18);
+      }
+
+      playTRexCatch() {
+        if (!this.enabled) return;
+        this.initCtx();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(150, now);
+        osc.frequency.exponentialRampToValueAtTime(80, now + 0.25);
+        gain.gain.setValueAtTime(0.4, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.3);
+      }
+
+      playWin() {
+        if (!this.enabled) return;
+        this.initCtx();
+        if (!this.ctx) return;
+        const notes = [523.25, 659.25, 783.99, 1046.5];
+        notes.forEach((freq, idx) => {
+          if (!this.ctx) return;
+          const now = this.ctx.currentTime + idx * 0.1;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, now);
+          gain.gain.setValueAtTime(0.3, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.25);
+        });
+      }
+
+      playFail() {
+        if (!this.enabled) return;
+        this.initCtx();
+        if (!this.ctx) return;
+        const notes = [400, 350, 300, 220];
+        notes.forEach((freq, idx) => {
+          if (!this.ctx) return;
+          const now = this.ctx.currentTime + idx * 0.15;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(freq, now);
+          gain.gain.setValueAtTime(0.25, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.2);
+        });
+      }
+
+      playMeteorExplosion() {
+        if (!this.enabled) return;
+        this.initCtx();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(100, now);
+        osc.frequency.exponentialRampToValueAtTime(30, now + 1.8);
+        gain.gain.setValueAtTime(0.6, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 2.0);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 2.0);
+      }
+
+      playBirdChirp() {
+        if (!this.enabled) return;
+        this.initCtx();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const chirps = [
+          { f1: 1800, f2: 2600, t: 0 },
+          { f1: 2400, f2: 3200, t: 0.12 },
+          { f1: 2200, f2: 3000, t: 0.28 },
+        ];
+        chirps.forEach(c => {
+          if (!this.ctx) return;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          const t = now + c.t;
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(c.f1, t);
+          osc.frequency.exponentialRampToValueAtTime(c.f2, t + 0.08);
+          gain.gain.setValueAtTime(0.2, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.09);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(t);
+          osc.stop(t + 0.1);
+        });
+      }
+    }
+
+    const sound = new SoundController();
+
+    // ==========================================
+    // 🎨 2. Standalone SVG Dinosaur Avatars
+    // ==========================================
+    const CuteMainDino = ({ className = 'w-32 h-32', isWalking = true }) => (
+      <div className={`relative inline-block ${className}`}>
+        <svg viewBox="0 0 160 140" className="w-full h-full drop-shadow-lg overflow-visible">
+          <ellipse cx="80" cy="130" rx="45" ry="8" fill="rgba(0,0,0,0.25)" className={isWalking ? "animate-pulse" : ""} />
+          <path d="M 35 85 Q 15 70 5 80 Q 20 100 45 98 Z" fill="#10B981" stroke="#065F46" strokeWidth="3" />
+          <polygon points="12,74 20,70 18,78" fill="#F59E0B" />
+          <polygon points="26,76 34,72 32,80" fill="#F59E0B" />
+          <g className={isWalking ? "animate-bounce" : ""}>
+            <rect x="48" y="95" width="16" height="28" rx="8" fill="#059669" stroke="#065F46" strokeWidth="2.5" />
+            <ellipse cx="56" cy="124" rx="12" ry="6" fill="#047857" />
+          </g>
+          <ellipse cx="80" cy="85" rx="42" ry="32" fill="#10B981" stroke="#065F46" strokeWidth="3" />
+          <path d="M 60 85 Q 75 112 105 105 Q 115 85 95 72 Q 70 70 60 85 Z" fill="#A7F3D0" />
+          <polygon points="55,56 65,42 75,56" fill="#F59E0B" stroke="#B45309" strokeWidth="1.5" />
+          <polygon points="75,54 85,38 95,54" fill="#F59E0B" stroke="#B45309" strokeWidth="1.5" />
+          <polygon points="95,58 103,46 111,58" fill="#F59E0B" stroke="#B45309" strokeWidth="1.5" />
+          <g>
+            <rect x="80" y="96" width="18" height="28" rx="9" fill="#10B981" stroke="#065F46" strokeWidth="3" />
+            <ellipse cx="89" cy="125" rx="14" ry="7" fill="#059669" stroke="#065F46" strokeWidth="2" />
+          </g>
+          <path d="M 98 75 Q 120 70 128 48 Q 135 25 115 20 Q 95 20 95 40 Q 95 65 98 75 Z" fill="#10B981" stroke="#065F46" strokeWidth="3" />
+          <circle cx="120" cy="38" r="24" fill="#10B981" stroke="#065F46" strokeWidth="3" />
+          <path d="M 125 30 Q 150 35 145 52 Q 135 58 120 54 Z" fill="#10B981" stroke="#065F46" strokeWidth="2.5" />
+          <circle cx="118" cy="32" r="9" fill="#FFFFFF" stroke="#065F46" strokeWidth="2" />
+          <circle cx="120" cy="32" r="5.5" fill="#1E293B" />
+          <circle cx="122" cy="30" r="2.5" fill="#FFFFFF" />
+          <ellipse cx="120" cy="46" rx="6" ry="3.5" fill="#F472B6" opacity="0.75" />
+          <path d="M 130 48 Q 137 54 142 46" fill="none" stroke="#065F46" strokeWidth="2.5" strokeLinecap="round" />
+          <path d="M 102 75 Q 118 78 122 70" fill="none" stroke="#065F46" strokeWidth="5" strokeLinecap="round" />
+        </svg>
+      </div>
+    );
+
+    const MicroraptorAvatar = ({ isGliding = false }) => (
+      <svg viewBox="0 0 150 110" className="w-full h-full drop-shadow-lg overflow-visible">
+        <defs>
+          <linearGradient id="microGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#1E293B" />
+            <stop offset="40%" stopColor="#1E3A8A" />
+            <stop offset="100%" stopColor="#0284C7" />
+          </linearGradient>
+          <linearGradient id="wingGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#2563EB" />
+            <stop offset="100%" stopColor="#091E42" />
+          </linearGradient>
+        </defs>
+        <path d="M 50 62 Q 25 65 -15 68 Q -25 69 -32 70" fill="none" stroke="#0F172A" strokeWidth="3.5" strokeLinecap="round" />
+        <path d="M -5 66 Q -22 52 -45 56 Q -35 70 -48 80 Q -25 78 -5 70 Z" fill="#38BDF8" stroke="#0F172A" strokeWidth="1.5" />
+        <path d="M 58 64 L 52 82 L 42 94" fill="none" stroke="#1E293B" strokeWidth="4" strokeLinecap="round" />
+        <path d="M 52 72 Q 35 90 22 96 Q 38 88 48 80 Z" fill="url(#wingGrad)" stroke="#0F172A" strokeWidth="1.5" />
+        <path d="M 50 62 Q 45 48 65 46 Q 88 44 94 56 Q 96 68 82 72 Q 62 74 50 62 Z" fill="url(#microGrad)" stroke="#0F172A" strokeWidth="2" />
+        <path d={isGliding ? "M 70 52 Q 55 12 105 18 Q 98 42 82 56 Z" : "M 70 52 Q 48 24 92 28 Q 90 48 78 58 Z"} fill="url(#wingGrad)" stroke="#0F172A" strokeWidth="2" />
+        <path d="M 86 52 Q 102 48 106 38 Q 112 28 102 26 Q 90 26 84 42 Z" fill="url(#microGrad)" stroke="#0F172A" strokeWidth="2" />
+        <path d="M 100 28 Q 112 24 128 30 Q 132 36 122 42 L 104 42 Z" fill="#1E293B" stroke="#0F172A" strokeWidth="2" />
+        <circle cx="109" cy="32" r="5" fill="#F59E0B" stroke="#78350F" strokeWidth="1.2" />
+        <ellipse cx="110" cy="32" rx="1.6" ry="4" fill="#0F172A" />
+      </svg>
+    );
+
+    const PteranodonAvatar = () => (
+      <svg viewBox="0 0 160 110" className="w-full h-full drop-shadow-xl overflow-visible">
+        <path d="M 68 52 Q 50 -10 135 5 Q 115 42 85 54 Z" fill="#EA580C" stroke="#78350F" strokeWidth="2" />
+        <path d="M 75 48 Q 62 8 125 12 Q 108 40 82 52 Z" fill="#F59E0B" opacity="0.8" />
+        <ellipse cx="75" cy="58" rx="22" ry="14" fill="#B45309" stroke="#78350F" strokeWidth="2.2" />
+        <path d="M 65 60 Q 30 95 0 90 Q 30 72 58 64 Z" fill="#EA580C" stroke="#78350F" strokeWidth="2" />
+        <path d="M 90 52 Q 110 38 120 28 Q 80 0 45 10 Q 82 26 95 48 Z" fill="#EA580C" stroke="#7C2D12" strokeWidth="2.5" />
+        <circle cx="108" cy="38" r="12" fill="#EA580C" stroke="#7C2D12" strokeWidth="2" />
+        <path d="M 116 35 L 160 44 L 116 50 Z" fill="#F59E0B" stroke="#92400E" strokeWidth="2.2" />
+        <circle cx="110" cy="36" r="4.5" fill="#FEF08A" stroke="#451A03" strokeWidth="1.5" />
+        <circle cx="111" cy="36" r="2.2" fill="#0F172A" />
+      </svg>
+    );
+
+    const ArchaeopteryxAvatar = () => (
+      <svg viewBox="0 0 130 90" className="w-full h-full drop-shadow-md overflow-visible">
+        <path d="M 35 50 Q 5 62 -12 70 Q 12 50 35 44 Z" fill="#0D9488" stroke="#115E59" strokeWidth="2" />
+        <ellipse cx="58" cy="48" rx="20" ry="13" fill="#0F766E" stroke="#134E4A" strokeWidth="2" />
+        <path d="M 50 44 Q 35 5 80 15 Q 70 38 60 46 Z" fill="#14B8A6" stroke="#115E59" strokeWidth="2" />
+        <polygon points="56,12 52,6 59,10" fill="#F59E0B" />
+        <polygon points="62,14 60,7 66,12" fill="#F59E0B" />
+        <circle cx="82" cy="30" r="11" fill="#0F766E" stroke="#134E4A" strokeWidth="2" />
+        <path d="M 90 28 L 112 33 L 90 38 Z" fill="#F59E0B" stroke="#B45309" strokeWidth="1.5" />
+        <circle cx="82" cy="28" r="3.5" fill="#FEF08A" stroke="#134E4A" strokeWidth="1" />
+        <circle cx="83" cy="28" r="1.8" fill="#000" />
+      </svg>
+    );
+
+    const ElasmosaurusAvatar = () => (
+      <svg viewBox="0 0 190 110" className="w-full h-full drop-shadow-lg overflow-visible">
+        <path d="M 40 70 Q 20 92 10 95 Q 26 80 40 75 Z" fill="#0284C7" stroke="#075985" strokeWidth="2.5" />
+        <ellipse cx="55" cy="62" rx="32" ry="20" fill="#0284C7" stroke="#075985" strokeWidth="2.5" />
+        <path d="M 72 75 Q 55 105 42 108 Q 62 92 78 78 Z" fill="#0284C7" stroke="#075985" strokeWidth="2.5" />
+        <path d="M 80 58 C 105 56 120 40 135 25 C 150 10 168 12 178 18 C 172 26 156 38 138 48 C 118 60 98 68 82 66 Z" fill="#0284C7" stroke="#075985" strokeWidth="2.5" />
+        <ellipse cx="178" cy="18" rx="10" ry="6.5" fill="#0284C7" stroke="#075985" strokeWidth="2" />
+        <path d="M 184 15 L 196 20 L 184 23 Z" fill="#38BDF8" stroke="#075985" strokeWidth="1.8" />
+        <circle cx="176" cy="16" r="3" fill="#FEF08A" stroke="#075985" strokeWidth="1" />
+        <circle cx="177" cy="16" r="1.5" fill="#0F172A" />
+      </svg>
+    );
+
+    const MosasaurusAvatar = () => (
+      <svg viewBox="0 0 140 85" className="w-full h-full drop-shadow-lg overflow-visible">
+        <path d="M 40 45 Q 15 48 -5 35 Q 5 50 -10 65 Q 15 52 40 48 Z" fill="#334155" stroke="#0F172A" strokeWidth="2" />
+        <ellipse cx="65" cy="45" rx="35" ry="16" fill="#1E293B" stroke="#0F172A" strokeWidth="2.5" />
+        <path d="M 50 56 Q 38 78 28 80 Q 42 68 55 58 Z" fill="#334155" stroke="#0F172A" strokeWidth="2" />
+        <path d="M 88 35 Q 120 36 135 44 L 115 56 Q 90 58 85 45 Z" fill="#1E293B" stroke="#0F172A" strokeWidth="2.5" />
+        <polygon points="105,45 108,41 111,45" fill="#FFF" />
+        <polygon points="113,45 116,41 119,45" fill="#FFF" />
+        <polygon points="121,45 124,41 127,45" fill="#FFF" />
+        <circle cx="102" cy="38" r="3" fill="#FACC15" stroke="#713F12" strokeWidth="1" />
+        <circle cx="103" cy="38" r="1.5" fill="#000" />
+      </svg>
+    );
+
+    const TRexAvatar = ({ isBiting = false }) => (
+      <svg viewBox="0 0 150 120" className="w-full h-full drop-shadow-xl overflow-visible">
+        <path d="M 50 65 Q 15 50 -5 55 Q 18 80 50 78 Z" fill="#B45309" stroke="#78350F" strokeWidth="2.5" />
+        <ellipse cx="75" cy="65" rx="32" ry="24" fill="#D97706" stroke="#78350F" strokeWidth="3" />
+        <ellipse cx="78" cy="80" rx="15" ry="18" fill="#D97706" stroke="#78350F" strokeWidth="2.5" />
+        <rect x="74" y="86" width="11" height="22" rx="5" fill="#B45309" stroke="#78350F" strokeWidth="2" />
+        <path d="M 92 68 Q 102 75 106 70" fill="none" stroke="#78350F" strokeWidth="4" strokeLinecap="round" />
+        <g className={isBiting ? "origin-center rotate-3 transition-transform" : ""}>
+          <path d="M 90 55 Q 110 30 135 30 Q 148 40 148 55 L 125 58 L 98 68 Z" fill="#D97706" stroke="#78350F" strokeWidth="3" />
+          <path d={isBiting ? "M 100 68 L 140 70 L 145 60 L 120 58 Z" : "M 100 68 L 145 64 L 148 56 L 120 58 Z"} fill="#B45309" stroke="#78350F" strokeWidth="2.5" />
+          <polygon points="122,58 125,52 128,58" fill="#FFF" />
+          <polygon points="130,58 133,52 136,58" fill="#FFF" />
+          <polygon points="138,58 141,51 144,58" fill="#FFF" />
+          <circle cx="118" cy="40" r="3.5" fill="#EF4444" stroke="#450A0A" strokeWidth="1" />
+          <circle cx="119" cy="40" r="1.8" fill="#000" />
+        </g>
+      </svg>
+    );
+
+    const CompsognathusAvatar = () => (
+      <svg viewBox="0 0 100 70" className="w-full h-full drop-shadow-md overflow-visible">
+        <path d="M 30 38 Q 10 32 -5 45 Q 12 38 30 42 Z" fill="#22C55E" stroke="#15803D" strokeWidth="1.5" />
+        <ellipse cx="45" cy="38" rx="16" ry="10" fill="#22C55E" stroke="#15803D" strokeWidth="1.5" />
+        <path d="M 40 44 L 38 58 L 44 60" fill="none" stroke="#15803D" strokeWidth="2" strokeLinecap="round" />
+        <path d="M 48 44 L 52 58 L 58 60" fill="none" stroke="#15803D" strokeWidth="2" strokeLinecap="round" />
+        <path d="M 56 34 Q 68 25 76 22 L 90 24 L 78 30 Q 64 36 56 38 Z" fill="#4ADE80" stroke="#15803D" strokeWidth="1.5" />
+        <circle cx="74" cy="24" r="2.5" fill="#FEF08A" stroke="#15803D" strokeWidth="0.8" />
+        <circle cx="75" cy="24" r="1.2" fill="#000" />
+      </svg>
+    );
+
+    const ModernBirdAvatar = ({ className = 'w-32 h-32' }) => (
+      <div className={`relative inline-block ${className}`}>
+        <svg viewBox="0 0 140 120" className="w-full h-full filter drop-shadow-[0_0_15px_rgba(251,191,36,0.8)] overflow-visible">
+          <path d="M 70 60 Q 30 10 5 25 Q 35 45 60 62 Z" fill="#F59E0B" stroke="#FEF3C7" strokeWidth="2" />
+          <path d="M 70 60 Q 110 10 135 25 Q 105 45 80 62 Z" fill="#F59E0B" stroke="#FEF3C7" strokeWidth="2" />
+          <ellipse cx="70" cy="65" rx="14" ry="24" fill="#FBBF24" stroke="#FFF" strokeWidth="2" />
+          <circle cx="70" cy="45" r="9" fill="#FDE047" stroke="#FFF" strokeWidth="2" />
+          <polygon points="67,37 70,28 73,37" fill="#FEF08A" stroke="#D97706" strokeWidth="1" />
+        </svg>
+      </div>
+    );
+
+    // ==========================================
+    // 🏷️ 3. Header & Navigation Component
+    // ==========================================
+    const HeaderNav = ({ currentStageNumber, stageName, isMuted, onToggleMute, onHome }) => (
+      <header className="w-full flex items-center justify-between px-4 py-2.5 bg-[#FAF3E0]/95 backdrop-blur-md border-b-2 border-[#D9B99B] text-[#4A3728] z-20 shrink-0 shadow-sm">
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => { sound.playEat(); onHome(); }}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/85 hover:bg-white border-2 border-[#D9B99B] text-xs font-bold text-[#4A3728] transition cursor-pointer shadow-sm active:scale-95"
+          >
+            <span>🏠 主畫面</span>
+          </button>
+          {currentStageNumber && (
+            <div className="flex items-center gap-1.5 px-3.5 py-1 bg-[#8B9A46]/15 border-2 border-[#6E7B36]/50 rounded-full text-xs font-bold text-[#6E7B36]">
+              <span>✨ 關卡 {currentStageNumber}：{stageName}</span>
+            </div>
+          )}
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={onToggleMute}
+            className="px-3 py-1.5 rounded-full bg-white/85 hover:bg-white border-2 border-[#D9B99B] text-xs font-bold text-[#4A3728] transition cursor-pointer active:scale-95 shadow-sm"
+          >
+            {isMuted ? "🔇 靜音" : "🔊 音效"}
+          </button>
+        </div>
+      </header>
+    );
+
+    // ==========================================
+    // 💀 4. Unified GameOverModal with Retry, Restart All, Home
+    // ==========================================
+    const GameOverModal = ({ reason, stageNumber, message, onRetry, onRestartAll, onHome }) => (
+      <div className="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="w-full max-w-md bg-[#FAF3E0] border-4 border-[#D9B99B] rounded-[32px] p-6 text-center shadow-2xl flex flex-col items-center">
+          <div className="w-16 h-16 rounded-full bg-red-100 border-2 border-red-400 flex items-center justify-center text-3xl mb-3 animate-pulse">
+            {reason === 'freeze' ? '❄️' : '💀'}
+          </div>
+          <h3 className="text-2xl font-black text-[#4A3728] mb-2">
+            {reason === 'freeze' ? '體溫過低，被凍僵了！' : '競爭失敗，食物不足！'}
+          </h3>
+          <p className="text-sm text-[#5D4E42] mb-6 leading-relaxed font-medium">
+            {message || `在第 ${stageNumber} 關中食物不足被超越了，快再試一次吧！`}
+          </p>
+          <div className="w-full flex flex-col gap-2.5">
+            <div className="flex gap-2.5 w-full">
+              <button
+                onClick={() => { sound.playEat(); onRetry(); }}
+                className="flex-1 py-3 px-4 bg-[#E67E22] hover:bg-[#D35400] text-white font-black rounded-full text-sm shadow-md transition active:scale-95 cursor-pointer"
+              >
+                🔄 本關重來
+              </button>
+              <button
+                onClick={() => { sound.playEat(); if (onRestartAll) onRestartAll(); else onHome(); }}
+                className="flex-1 py-3 px-4 bg-[#6E7B36] hover:bg-[#586429] text-white font-black rounded-full text-sm shadow-md transition active:scale-95 cursor-pointer"
+              >
+                🔁 重新開始
+              </button>
+            </div>
+            <button
+              onClick={() => { sound.playEat(); onHome(); }}
+              className="w-full py-2.5 px-4 bg-white hover:bg-stone-50 text-[#4A3728] font-bold rounded-full text-sm border-2 border-[#D9B99B] shadow-sm transition active:scale-95 cursor-pointer"
+            >
+              🏠 返回主選單
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+
+    // ==========================================
+    // 📖 5. StageIntroModal (with Character Selector)
+    // ==========================================
+    const StageIntroModal = ({ stageNumber, onStartStage, onHome, stage2Char, setStage2Char, stage3Char, setStage3Char }) => {
+      const stageData = {
+        1: {
+          badge: '第一關：白堊紀羽毛禦寒挑戰',
+          title: '小盜龍收集羽毛禦寒',
+          text: '白堊紀晚期氣溫驟降，擁有四個翅膀的小盜龍需要依靠羽毛保暖！',
+          goalText: '滑動滑鼠/手指控制小盜龍收集飄落的閃亮羽毛。注意體溫會持續下降，羽毛能恢復體溫，撐過 30 秒即可過關！',
+          avatar: <div className="w-24 h-24"><MicroraptorAvatar /></div>
+        },
+        2: {
+          badge: '第二關：白堊紀空中掠食競賽',
+          title: '始祖鳥 vs 無齒翼龍',
+          text: '選擇你的空中掠食者，在天空展開 30 秒掠食比拼！',
+          goalText: '滑動控制掠食者在空中抓捕昆蟲與小型翼龍。30 秒結束時分數高於競爭對手即可獲勝！',
+          avatar: <div className="w-24 h-24">{stage2Char === 'archaeopteryx' ? <ArchaeopteryxAvatar /> : <PteranodonAvatar />}</div>
+        },
+        3: {
+          badge: '第三關：白堊紀海洋巨獸深潛戰',
+          title: '薄板龍 vs 滄龍',
+          text: '長頸的蛇頸龍代表「薄板龍」與頂級海洋掠食者「滄龍」，誰才是海洋霸主？',
+          goalText: '在深海中追逐腔棘魚、菊石與墨魚。30 秒結束時捕捉分數高於對手即可過關！',
+          avatar: <div className="w-28 h-20">{stage3Char === 'elasmosaurus' ? <ElasmosaurusAvatar /> : <MosasaurusAvatar />}</div>
+        },
+        4: {
+          badge: '第四關：陸地霸權與生存對決',
+          title: '霸王龍伏擊美頜龍',
+          text: '體型龐大兇猛的霸王龍，以及嬌小迅捷的美頜龍，到底誰更能存活呢！',
+          goalText: '操縱巨大的霸王龍在蕨類草叢與石堆中搜尋閃現的美頜龍。30 秒內成功捕捉滿 20 隻美頜龍即可過關！',
+          avatar: <div className="w-28 h-24"><TRexAvatar /></div>
+        }
+      }[stageNumber];
+
+      return (
+        <div className="relative w-full h-full min-h-[600px] flex items-center justify-center p-4 bg-[#FAF3E0] select-none">
+          <div className="w-full max-w-xl bg-white/90 p-6 sm:p-8 rounded-[36px] border-4 border-[#D9B99B] shadow-2xl text-center flex flex-col items-center my-auto">
+            <div className="px-3.5 py-1 bg-[#8B9A46]/20 text-[#6E7B36] text-xs font-black rounded-full mb-2">
+              {stageData.badge}
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-black text-[#6E7B36] mb-3">
+              {stageData.title}
+            </h2>
+
+            <div className="my-2">{stageData.avatar}</div>
+
+            {/* Stage 2 Character Toggle */}
+            {stageNumber === 2 && (
+              <div className="w-full my-3 p-3 bg-[#FAF3E0] rounded-2xl border-2 border-[#D9B99B]">
+                <div className="text-xs font-bold text-[#5D4E42] mb-2">選擇操作角色：</div>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => setStage2Char('archaeopteryx')}
+                    className={`py-2 px-3 rounded-xl border-2 font-black text-xs transition cursor-pointer ${stage2Char === 'archaeopteryx' ? 'bg-[#6E7B36] text-white border-[#6E7B36]' : 'bg-white text-[#4A3728] border-[#D9B99B]'}`}
+                  >
+                    始祖鳥 (羽毛滑翔)
+                  </button>
+                  <button
+                    onClick={() => setStage2Char('pteranodon')}
+                    className={`py-2 px-3 rounded-xl border-2 font-black text-xs transition cursor-pointer ${stage2Char === 'pteranodon' ? 'bg-[#E67E22] text-white border-[#E67E22]' : 'bg-white text-[#4A3728] border-[#D9B99B]'}`}
+                  >
+                    無齒翼龍 (巨翼掠食)
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Stage 3 Character Toggle */}
+            {stageNumber === 3 && (
+              <div className="w-full my-3 p-3 bg-[#FAF3E0] rounded-2xl border-2 border-[#D9B99B]">
+                <div className="text-xs font-bold text-[#5D4E42] mb-2">選擇操作海獸：</div>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => setStage3Char('elasmosaurus')}
+                    className={`py-2 px-3 rounded-xl border-2 font-black text-xs transition cursor-pointer ${stage3Char === 'elasmosaurus' ? 'bg-[#0284C7] text-white border-[#0284C7]' : 'bg-white text-[#4A3728] border-[#D9B99B]'}`}
+                  >
+                    薄板龍 (長頸橫掃)
+                  </button>
+                  <button
+                    onClick={() => setStage3Char('mosasaurus')}
+                    className={`py-2 px-3 rounded-xl border-2 font-black text-xs transition cursor-pointer ${stage3Char === 'mosasaurus' ? 'bg-[#1E293B] text-white border-[#1E293B]' : 'bg-white text-[#4A3728] border-[#D9B99B]'}`}
+                  >
+                    滄龍 (深海狂暴)
+                  </button>
+                </div>
+              </div>
+            )}
+
+            <p className="text-[#5D4E42] text-sm my-2 leading-relaxed font-medium">{stageData.text}</p>
+            <div className="p-3 bg-[#FAF3E0] rounded-2xl border-2 border-[#D9B99B] text-xs text-[#6E7B36] font-bold my-2">
+              🎯 {stageData.goalText}
+            </div>
+
+            <div className="w-full flex gap-3 mt-4">
+              <button
+                onClick={() => { sound.playWin(); onStartStage(); }}
+                className="flex-1 py-3.5 bg-[#E67E22] hover:bg-[#D35400] text-white font-black text-lg rounded-full shadow-lg transition active:scale-95 cursor-pointer"
+              >
+                開始本關挑戰 ▶
+              </button>
+              <button
+                onClick={() => { sound.playEat(); onHome(); }}
+                className="py-3.5 px-6 bg-white hover:bg-stone-50 text-[#4A3728] font-bold rounded-full border-2 border-[#D9B99B] shadow-sm transition active:scale-95 cursor-pointer"
+              >
+                主選單
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    // ==========================================
+    // 🎮 6. Stage 1 Game: Microraptor Feather Collect
+    // ==========================================
+    const Stage1Game = ({ onStagePass, onRestartAll, onHome }) => {
+      const containerRef = useRef(null);
+      const [timeLeft, setTimeLeft] = useState(30);
+      const [temperature, setTemperature] = useState(100);
+      const [playerPos, setPlayerPos] = useState({ x: 50, y: 50 });
+      const [feathers, setFeathers] = useState([]);
+      const [feathersCollected, setFeathersCollected] = useState(0);
+      const [isGameOver, setIsGameOver] = useState(false);
+      const [floatingTexts, setFloatingTexts] = useState([]);
+
+      const playerPosRef = useRef({ x: 50, y: 50 });
+
+      const addFloatingText = (text, x, y) => {
+        const id = Date.now() + Math.random();
+        setFloatingTexts((prev) => [...prev, { id, text, x, y }]);
+        setTimeout(() => {
+          setFloatingTexts((prev) => prev.filter((item) => item.id !== id));
+        }, 850);
+      };
+
+      const resetGame = () => {
+        setTimeLeft(30);
+        setTemperature(100);
+        setPlayerPos({ x: 50, y: 50 });
+        playerPosRef.current = { x: 50, y: 50 };
+        setFeathers([]);
+        setFeathersCollected(0);
+        setIsGameOver(false);
+      };
+
+      const handlePointerMove = (e) => {
+        if (!containerRef.current || isGameOver) return;
+        const rect = containerRef.current.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        const x = Math.min(Math.max(((clientX - rect.left) / rect.width) * 100, 5), 95);
+        const y = Math.min(Math.max(((clientY - rect.top) / rect.height) * 100, 5), 95);
+        playerPosRef.current = { x, y };
+        setPlayerPos({ x, y });
+      };
+
+      useEffect(() => {
+        if (isGameOver) return;
+        const timer = setInterval(() => {
+          setTimeLeft((t) => {
+            if (t <= 1) {
+              clearInterval(timer);
+              sound.playWin();
+              onStagePass();
+              return 0;
+            }
+            return t - 1;
+          });
+          setTemperature((temp) => {
+            const nextTemp = temp - 3.2;
+            if (nextTemp <= 0) {
+              clearInterval(timer);
+              sound.playFail();
+              setIsGameOver(true);
+              return 0;
+            }
+            return nextTemp;
+          });
+        }, 1000);
+        return () => clearInterval(timer);
+      }, [isGameOver, onStagePass]);
+
+      useEffect(() => {
+        if (isGameOver) return;
+        const spawner = setInterval(() => {
+          if (feathers.length >= 6) return;
+          const newFeather = {
+            id: 'feather_' + Date.now() + '_' + Math.random(),
+            x: Math.random() * 85 + 7.5,
+            y: Math.random() * 75 + 10,
+            type: 'feather',
+            points: 1,
+            size: 28,
+            createdAt: Date.now()
+          };
+          setFeathers((prev) => [...prev, newFeather]);
+        }, 600);
+        return () => clearInterval(spawner);
+      }, [feathers.length, isGameOver]);
+
+      useEffect(() => {
+        if (isGameOver) return;
+        const gameLoop = setInterval(() => {
+          const p = playerPosRef.current;
+          setFeathers((prev) => {
+            const remaining = [];
+            prev.forEach((feather) => {
+              const dx = Math.abs(feather.x - p.x);
+              const dy = Math.abs(feather.y - p.y);
+              if (dx < 9 && dy < 9) {
+                sound.playFeatherCollect();
+                setFeathersCollected((c) => c + 1);
+                setTemperature((temp) => Math.min(temp + 14, 100));
+                addFloatingText('+14% 體溫 🔥', feather.x, feather.y);
+              } else if (Date.now() - feather.createdAt < 4500) {
+                remaining.push(feather);
+              }
+            });
+            return remaining;
+          });
+        }, 50);
+        return () => clearInterval(gameLoop);
+      }, [isGameOver]);
+
+      return (
+        <div
+          ref={containerRef}
+          onMouseMove={handlePointerMove}
+          onTouchMove={handlePointerMove}
+          className="relative w-full h-full min-h-[550px] bg-gradient-to-b from-sky-900 via-slate-800 to-stone-900 overflow-hidden select-none cursor-crosshair"
+        >
+          {/* Top HUD */}
+          <div className="absolute top-3 left-4 right-4 flex justify-between items-center z-30 pointer-events-none">
+            <div className="bg-black/60 px-4 py-1.5 rounded-full border border-sky-400 text-sky-200 text-xs font-bold">
+              ⏱️ 存活倒數：<span className="text-base text-yellow-300 font-mono">{timeLeft}s</span>
+            </div>
+            <div className="bg-black/60 px-4 py-1.5 rounded-full border border-amber-400 text-amber-200 text-xs font-bold">
+              🪶 收集羽毛：<span className="text-base text-yellow-300 font-mono">{feathersCollected} 根</span>
+            </div>
+            <div className="bg-black/60 px-4 py-1.5 rounded-full border border-red-400 text-red-200 text-xs font-bold w-44">
+              <div className="flex justify-between text-[11px] mb-0.5">
+                <span>🌡️ 體溫禦寒</span>
+                <span>{Math.round(temperature)}%</span>
+              </div>
+              <div className="w-full h-2 bg-stone-700 rounded-full overflow-hidden">
+                <div
+                  className={`h-full transition-all duration-200 ${temperature < 30 ? 'bg-red-500 animate-pulse' : temperature < 60 ? 'bg-yellow-500' : 'bg-emerald-400'}`}
+                  style={{ width: `${temperature}%` }}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Feathers */}
+          {feathers.map((f) => (
+            <div
+              key={f.id}
+              className="absolute text-2xl animate-bounce"
+              style={{ left: `${f.x}%`, top: `${f.y}%`, transform: 'translate(-50%, -50%)' }}
+            >
+              🪶
+            </div>
+          ))}
+
+          {/* Microraptor Player */}
+          <div
+            className="absolute w-24 h-20 transition-transform duration-75 origin-center"
+            style={{ left: `${playerPos.x}%`, top: `${playerPos.y}%`, transform: 'translate(-50%, -50%)' }}
+          >
+            <MicroraptorAvatar isGliding={true} />
+          </div>
+
+          {/* Floating feedback texts */}
+          {floatingTexts.map((ft) => (
+            <div
+              key={ft.id}
+              className="absolute text-xs font-black text-amber-300 animate-float-text bg-black/70 px-2 py-0.5 rounded-full border border-amber-400"
+              style={{ left: `${ft.x}%`, top: `${ft.y}%` }}
+            >
+              {ft.text}
+            </div>
+          ))}
+
+          {isGameOver && (
+            <GameOverModal
+              reason="freeze"
+              stageNumber={1}
+              message="小盜龍體溫歸零被凍僵了！體力消耗迅速，請更敏捷地收集閃現的羽毛以撐過 30 秒！"
+              onRetry={resetGame}
+              onRestartAll={onRestartAll}
+              onHome={onHome}
+            />
+          )}
+        </div>
+      );
+    };
+
+    // ==========================================
+    // 🦅 7. Stage 2 Game: Aerial Predation Race
+    // ==========================================
+    const Stage2Game = ({ playerCharacter, onStagePass, onRestartAll, onHome }) => {
+      const containerRef = useRef(null);
+      const [timeLeft, setTimeLeft] = useState(30);
+      const [playerScore, setPlayerScore] = useState(0);
+      const [aiScore, setAiScore] = useState(0);
+      const [playerPos, setPlayerPos] = useState({ x: 30, y: 50 });
+      const [aiPos, setAiPos] = useState({ x: 70, y: 50 });
+      const [preys, setPreys] = useState([]);
+      const [isGameOver, setIsGameOver] = useState(false);
+      const [floatingTexts, setFloatingTexts] = useState([]);
+
+      const playerPosRef = useRef({ x: 30, y: 50 });
+      const aiPosRef = useRef({ x: 70, y: 50 });
+      const preysRef = useRef([]);
+      preysRef.current = preys;
+
+      const aiCharacter = playerCharacter === 'archaeopteryx' ? 'pteranodon' : 'archaeopteryx';
+
+      const addFloatingText = (text, x, y) => {
+        const id = Date.now() + Math.random();
+        setFloatingTexts((prev) => [...prev, { id, text, x, y }]);
+        setTimeout(() => {
+          setFloatingTexts((prev) => prev.filter((item) => item.id !== id));
+        }, 850);
+      };
+
+      const resetGame = () => {
+        setTimeLeft(30);
+        setPlayerScore(0);
+        setAiScore(0);
+        setPlayerPos({ x: 30, y: 50 });
+        setAiPos({ x: 70, y: 50 });
+        playerPosRef.current = { x: 30, y: 50 };
+        aiPosRef.current = { x: 70, y: 50 };
+        setPreys([]);
+        setIsGameOver(false);
+      };
+
+      const handlePointerMove = (e) => {
+        if (!containerRef.current || isGameOver) return;
+        const rect = containerRef.current.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        const x = Math.min(Math.max(((clientX - rect.left) / rect.width) * 100, 5), 95);
+        const y = Math.min(Math.max(((clientY - rect.top) / rect.height) * 100, 5), 95);
+        playerPosRef.current = { x, y };
+        setPlayerPos({ x, y });
+      };
+
+      useEffect(() => {
+        if (isGameOver) return;
+        const timer = setInterval(() => {
+          setTimeLeft((t) => {
+            if (t <= 1) {
+              clearInterval(timer);
+              if (playerScore >= aiScore) {
+                sound.playWin();
+                onStagePass();
+              } else {
+                sound.playFail();
+                setIsGameOver(true);
+              }
+              return 0;
+            }
+            return t - 1;
+          });
+        }, 1000);
+        return () => clearInterval(timer);
+      }, [isGameOver, playerScore, aiScore, onStagePass]);
+
+      useEffect(() => {
+        if (isGameOver) return;
+        const spawner = setInterval(() => {
+          if (preysRef.current.length >= 6) return;
+          const items = [
+            { type: 'dragonfly', emoji: '🦗', points: 10, label: '史前蜻蜓' },
+            { type: 'beetle', emoji: '🪲', points: 15, label: '巨甲蟲' },
+            { type: 'small_pterosaur', emoji: '🦇', points: 25, label: '小翼龍' }
+          ];
+          const choice = items[Math.floor(Math.random() * items.length)];
+          const newPrey = {
+            id: 'prey_' + Date.now() + '_' + Math.random(),
+            x: Math.random() * 85 + 7.5,
+            y: Math.random() * 75 + 10,
+            emoji: choice.emoji,
+            points: choice.points,
+            label: choice.label,
+            spawnTime: Date.now(),
+            duration: 3800
+          };
+          setPreys((prev) => [...prev, newPrey]);
+        }, 700);
+        return () => clearInterval(spawner);
+      }, [isGameOver]);
+
+      useEffect(() => {
+        if (isGameOver) return;
+        const physicsLoop = setInterval(() => {
+          const curPreys = preysRef.current;
+          const p = playerPosRef.current;
+          const ai = aiPosRef.current;
+
+          // AI target chasing
+          if (curPreys.length > 0) {
+            const target = curPreys[0];
+            const dx = target.x - ai.x;
+            const dy = target.y - ai.y;
+            const nextAi = {
+              x: ai.x + dx * 0.065,
+              y: ai.y + dy * 0.065
+            };
+            aiPosRef.current = nextAi;
+            setAiPos(nextAi);
+          }
+
+          // Check collisions
+          const now = Date.now();
+          setPreys((prev) => {
+            const remaining = [];
+            prev.forEach((prey) => {
+              const pDist = Math.hypot(prey.x - p.x, prey.y - p.y);
+              const aiDist = Math.hypot(prey.x - ai.x, prey.y - ai.y);
+
+              if (pDist < 10.5) {
+                sound.playEat();
+                setPlayerScore((s) => s + prey.points);
+                addFloatingText(`+${prey.points} ${prey.label}`, prey.x, prey.y);
+              } else if (aiDist < 9.0) {
+                setAiScore((s) => s + prey.points);
+              } else if (now - prey.spawnTime < prey.duration) {
+                remaining.push(prey);
+              }
+            });
+            return remaining;
+          });
+        }, 45);
+        return () => clearInterval(physicsLoop);
+      }, [isGameOver]);
+
+      return (
+        <div
+          ref={containerRef}
+          onMouseMove={handlePointerMove}
+          onTouchMove={handlePointerMove}
+          className="relative w-full h-full min-h-[550px] bg-gradient-to-b from-sky-400 via-amber-100 to-emerald-200 overflow-hidden select-none cursor-crosshair"
+        >
+          {/* HUD */}
+          <div className="absolute top-3 left-4 right-4 flex justify-between items-center z-30 pointer-events-none">
+            <div className="bg-white/90 px-4 py-1.5 rounded-full border-2 border-[#D9B99B] text-xs font-bold text-[#4A3728]">
+              ⏱️ 倒數：<span className="text-base text-[#E67E22] font-mono">{timeLeft}s</span>
+            </div>
+            <div className="bg-emerald-600 text-white px-4 py-1.5 rounded-full text-xs font-black shadow-md">
+              你的得分：<span className="text-base font-mono">{playerScore}</span>
+            </div>
+            <div className="bg-red-600 text-white px-4 py-1.5 rounded-full text-xs font-black shadow-md">
+              對手得分：<span className="text-base font-mono">{aiScore}</span>
+            </div>
+          </div>
+
+          {/* Preys */}
+          {preys.map((p) => (
+            <div
+              key={p.id}
+              className="absolute text-3xl animate-pulse"
+              style={{ left: `${p.x}%`, top: `${p.y}%`, transform: 'translate(-50%, -50%)' }}
+            >
+              {p.emoji}
+            </div>
+          ))}
+
+          {/* Player */}
+          <div
+            className="absolute w-24 h-20 transition-transform duration-75 origin-center"
+            style={{ left: `${playerPos.x}%`, top: `${playerPos.y}%`, transform: 'translate(-50%, -50%)' }}
+          >
+            {playerCharacter === 'archaeopteryx' ? <ArchaeopteryxAvatar /> : <PteranodonAvatar />}
+          </div>
+
+          {/* AI Rival */}
+          <div
+            className="absolute w-24 h-20 opacity-80"
+            style={{ left: `${aiPos.x}%`, top: `${aiPos.y}%`, transform: 'translate(-50%, -50%) scaleX(-1)' }}
+          >
+            {aiCharacter === 'archaeopteryx' ? <ArchaeopteryxAvatar /> : <PteranodonAvatar />}
+          </div>
+
+          {/* Floating Texts */}
+          {floatingTexts.map((ft) => (
+            <div
+              key={ft.id}
+              className="absolute text-xs font-black text-emerald-800 animate-float-text bg-white/90 px-2 py-0.5 rounded-full border border-emerald-400"
+              style={{ left: `${ft.x}%`, top: `${ft.y}%` }}
+            >
+              {ft.text}
+            </div>
+          ))}
+
+          {isGameOver && (
+            <GameOverModal
+              reason="starve"
+              stageNumber={2}
+              message={`30秒倒數結束！你的分數 (${playerScore}分) 未能超越對手 (${aiScore}分)，因為捕食不足餓死失敗了！`}
+              onRetry={resetGame}
+              onRestartAll={onRestartAll}
+              onHome={onHome}
+            />
+          )}
+        </div>
+      );
+    };
+
+    // ==========================================
+    // 🌊 8. Stage 3 Game: Deep Ocean Beast Battle
+    // ==========================================
+    const Stage3Game = ({ playerCharacter, onStagePass, onRestartAll, onHome }) => {
+      const containerRef = useRef(null);
+      const [timeLeft, setTimeLeft] = useState(30);
+      const [playerScore, setPlayerScore] = useState(0);
+      const [aiScore, setAiScore] = useState(0);
+      const [playerPos, setPlayerPos] = useState({ x: 30, y: 50 });
+      const [aiPos, setAiPos] = useState({ x: 70, y: 50 });
+      const [preys, setPreys] = useState([]);
+      const [isGameOver, setIsGameOver] = useState(false);
+      const [floatingTexts, setFloatingTexts] = useState([]);
+
+      const playerPosRef = useRef({ x: 30, y: 50 });
+      const aiPosRef = useRef({ x: 70, y: 50 });
+      const preysRef = useRef([]);
+      preysRef.current = preys;
+
+      const aiCharacter = playerCharacter === 'elasmosaurus' ? 'mosasaurus' : 'elasmosaurus';
+
+      const addFloatingText = (text, x, y) => {
+        const id = Date.now() + Math.random();
+        setFloatingTexts((prev) => [...prev, { id, text, x, y }]);
+        setTimeout(() => {
+          setFloatingTexts((prev) => prev.filter((item) => item.id !== id));
+        }, 850);
+      };
+
+      const resetGame = () => {
+        setTimeLeft(30);
+        setPlayerScore(0);
+        setAiScore(0);
+        setPlayerPos({ x: 30, y: 50 });
+        setAiPos({ x: 70, y: 50 });
+        playerPosRef.current = { x: 30, y: 50 };
+        aiPosRef.current = { x: 70, y: 50 };
+        setPreys([]);
+        setIsGameOver(false);
+      };
+
+      const handlePointerMove = (e) => {
+        if (!containerRef.current || isGameOver) return;
+        const rect = containerRef.current.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        const x = Math.min(Math.max(((clientX - rect.left) / rect.width) * 100, 5), 95);
+        const y = Math.min(Math.max(((clientY - rect.top) / rect.height) * 100, 5), 95);
+        playerPosRef.current = { x, y };
+        setPlayerPos({ x, y });
+      };
+
+      useEffect(() => {
+        if (isGameOver) return;
+        const timer = setInterval(() => {
+          setTimeLeft((t) => {
+            if (t <= 1) {
+              clearInterval(timer);
+              if (playerScore >= aiScore) {
+                sound.playWin();
+                onStagePass();
+              } else {
+                sound.playFail();
+                setIsGameOver(true);
+              }
+              return 0;
+            }
+            return t - 1;
+          });
+        }, 1000);
+        return () => clearInterval(timer);
+      }, [isGameOver, playerScore, aiScore, onStagePass]);
+
+      useEffect(() => {
+        if (isGameOver) return;
+        const spawner = setInterval(() => {
+          if (preysRef.current.length >= 7) return;
+          const items = [
+            { type: 'coelacanth', emoji: '🐟', points: 10, label: '腔棘魚' },
+            { type: 'ammonite', emoji: '🐚', points: 15, label: '菊石' },
+            { type: 'squid', emoji: '🦑', points: 25, label: '史前巨烏賊' }
+          ];
+          const choice = items[Math.floor(Math.random() * items.length)];
+          const newPrey = {
+            id: 'sea_' + Date.now() + '_' + Math.random(),
+            x: Math.random() * 85 + 7.5,
+            y: Math.random() * 75 + 10,
+            emoji: choice.emoji,
+            points: choice.points,
+            label: choice.label,
+            spawnTime: Date.now(),
+            duration: 4000
+          };
+          setPreys((prev) => [...prev, newPrey]);
+        }, 650);
+        return () => clearInterval(spawner);
+      }, [isGameOver]);
+
+      useEffect(() => {
+        if (isGameOver) return;
+        const physicsLoop = setInterval(() => {
+          const curPreys = preysRef.current;
+          const p = playerPosRef.current;
+          const ai = aiPosRef.current;
+
+          if (curPreys.length > 0) {
+            const target = curPreys[0];
+            const dx = target.x - ai.x;
+            const dy = target.y - ai.y;
+            const nextAi = {
+              x: ai.x + dx * 0.065,
+              y: ai.y + dy * 0.065
+            };
+            aiPosRef.current = nextAi;
+            setAiPos(nextAi);
+          }
+
+          const now = Date.now();
+          const pRadius = playerCharacter === 'elasmosaurus' ? 16.0 : 10.0;
+
+          setPreys((prev) => {
+            const remaining = [];
+            prev.forEach((prey) => {
+              const pDist = Math.hypot(prey.x - p.x, prey.y - p.y);
+              const aiDist = Math.hypot(prey.x - ai.x, prey.y - ai.y);
+
+              if (pDist < pRadius) {
+                sound.playWaterSplash();
+                setPlayerScore((s) => s + prey.points);
+                addFloatingText(`+${prey.points} ${prey.label}`, prey.x, prey.y);
+              } else if (aiDist < 9.0) {
+                setAiScore((s) => s + prey.points);
+              } else if (now - prey.spawnTime < prey.duration) {
+                remaining.push(prey);
+              }
+            });
+            return remaining;
+          });
+        }, 45);
+        return () => clearInterval(physicsLoop);
+      }, [isGameOver, playerCharacter]);
+
+      return (
+        <div
+          ref={containerRef}
+          onMouseMove={handlePointerMove}
+          onTouchMove={handlePointerMove}
+          className="relative w-full h-full min-h-[550px] bg-gradient-to-b from-cyan-900 via-blue-950 to-slate-950 overflow-hidden select-none cursor-crosshair"
+        >
+          {/* HUD */}
+          <div className="absolute top-3 left-4 right-4 flex justify-between items-center z-30 pointer-events-none">
+            <div className="bg-black/60 px-4 py-1.5 rounded-full border border-cyan-400 text-cyan-200 text-xs font-bold">
+              ⏱️ 倒數：<span className="text-base text-yellow-300 font-mono">{timeLeft}s</span>
+            </div>
+            <div className="bg-cyan-600 text-white px-4 py-1.5 rounded-full text-xs font-black shadow-md">
+              你的獵捕分：<span className="text-base font-mono">{playerScore}</span>
+            </div>
+            <div className="bg-red-600 text-white px-4 py-1.5 rounded-full text-xs font-black shadow-md">
+              競爭者得分：<span className="text-base font-mono">{aiScore}</span>
+            </div>
+          </div>
+
+          {/* Preys */}
+          {preys.map((p) => (
+            <div
+              key={p.id}
+              className="absolute text-3xl animate-bounce"
+              style={{ left: `${p.x}%`, top: `${p.y}%`, transform: 'translate(-50%, -50%)' }}
+            >
+              {p.emoji}
+            </div>
+          ))}
+
+          {/* Player */}
+          <div
+            className="absolute w-28 h-20 transition-transform duration-75 origin-center"
+            style={{ left: `${playerPos.x}%`, top: `${playerPos.y}%`, transform: 'translate(-50%, -50%)' }}
+          >
+            {playerCharacter === 'elasmosaurus' ? <ElasmosaurusAvatar /> : <MosasaurusAvatar />}
+          </div>
+
+          {/* AI Rival */}
+          <div
+            className="absolute w-28 h-20 opacity-80"
+            style={{ left: `${aiPos.x}%`, top: `${aiPos.y}%`, transform: 'translate(-50%, -50%) scaleX(-1)' }}
+          >
+            {aiCharacter === 'elasmosaurus' ? <ElasmosaurusAvatar /> : <MosasaurusAvatar />}
+          </div>
+
+          {/* Floating texts */}
+          {floatingTexts.map((ft) => (
+            <div
+              key={ft.id}
+              className="absolute text-xs font-black text-cyan-300 animate-float-text bg-black/70 px-2 py-0.5 rounded-full border border-cyan-400"
+              style={{ left: `${ft.x}%`, top: `${ft.y}%` }}
+            >
+              {ft.text}
+            </div>
+          ))}
+
+          {isGameOver && (
+            <GameOverModal
+              reason="starve"
+              stageNumber={3}
+              message={`深海競爭結束！你的分數 (${playerScore}分) 未能超越對手 (${aiScore}分)，在水壓與食物匱乏中餓死失敗了！`}
+              onRetry={resetGame}
+              onRestartAll={onRestartAll}
+              onHome={onHome}
+            />
+          )}
+        </div>
+      );
+    };
+
+    // ==========================================
+    // 🦖 9. Stage 4 Game: T-Rex Hunting Compsognathus (Goal: 20 caught)
+    // ==========================================
+    const Stage4Game = ({ onStagePass, onRestartAll, onHome }) => {
+      const containerRef = useRef(null);
+      const [timeLeft, setTimeLeft] = useState(30);
+      const [caughtCount, setCaughtCount] = useState(0);
+      const [playerPos, setPlayerPos] = useState({ x: 50, y: 50 });
+      const [compys, setCompys] = useState([]);
+      const [isGameOver, setIsGameOver] = useState(false);
+      const [isBiting, setIsBiting] = useState(false);
+      const [facingLeft, setFacingLeft] = useState(false);
+      const [floatingTexts, setFloatingTexts] = useState([]);
+
+      const playerPosRef = useRef({ x: 50, y: 50 });
+      const targetPosRef = useRef({ x: 50, y: 50 });
+      const caughtCountRef = useRef(0);
+      const caughtIdsRef = useRef(new Set());
+      const compysRef = useRef([]);
+
+      caughtCountRef.current = caughtCount;
+      compysRef.current = compys;
+
+      const addFloatingText = (text, x, y) => {
+        const id = Date.now() + Math.random();
+        setFloatingTexts((prev) => [...prev, { id, text, x, y }]);
+        setTimeout(() => {
+          setFloatingTexts((prev) => prev.filter((item) => item.id !== id));
+        }, 850);
+      };
+
+      const attemptCatch = useCallback((pos) => {
+        const biteRadius = 13.5;
+        const currentCompys = compysRef.current;
+
+        const targetCompy = currentCompys.find((compy) => {
+          if (caughtIdsRef.current.has(compy.id)) return false;
+          const dx = Math.abs(compy.x - pos.x);
+          const dy = Math.abs(compy.y - pos.y);
+          return Math.hypot(dx, dy) < biteRadius;
+        });
+
+        if (targetCompy) {
+          caughtIdsRef.current.add(targetCompy.id);
+          setCompys((prev) => prev.filter((c) => c.id !== targetCompy.id));
+          sound.playTRexCatch();
+          setIsBiting(true);
+          setTimeout(() => setIsBiting(false), 250);
+
+          setCaughtCount((c) => {
+            const newCount = c + 1;
+            addFloatingText(`捕獲美頜龍! (${newCount}/20)`, targetCompy.x, targetCompy.y);
+            if (newCount === 20) {
+              sound.playWin();
+            }
+            return newCount;
+          });
+        }
+      }, []);
+
+      const resetGame = () => {
+        setPlayerPos({ x: 50, y: 50 });
+        targetPosRef.current = { x: 50, y: 50 };
+        playerPosRef.current = { x: 50, y: 50 };
+        setCaughtCount(0);
+        caughtCountRef.current = 0;
+        caughtIdsRef.current.clear();
+        setTimeLeft(30);
+        setCompys([]);
+        compysRef.current = [];
+        setIsGameOver(false);
+      };
+
+      const handlePointerMove = (e) => {
+        if (!containerRef.current || isGameOver) return;
+        const rect = containerRef.current.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        const x = Math.min(Math.max(((clientX - rect.left) / rect.width) * 100, 5), 95);
+        const y = Math.min(Math.max(((clientY - rect.top) / rect.height) * 100, 5), 95);
+        targetPosRef.current = { x, y };
+      };
+
+      // T-Rex Movement Loop (deliberate heavier predator inertia ~0.105)
+      useEffect(() => {
+        if (isGameOver) return;
+        const moveLoop = setInterval(() => {
+          const target = targetPosRef.current;
+          const prev = playerPosRef.current;
+          const dx = target.x - prev.x;
+          const dy = target.y - prev.y;
+
+          if (Math.abs(dx) < 0.1 && Math.abs(dy) < 0.1) return;
+
+          if (dx < -0.4) setFacingLeft(true);
+          else if (dx > 0.4) setFacingLeft(false);
+
+          const nextPos = {
+            x: prev.x + dx * 0.105,
+            y: prev.y + dy * 0.105
+          };
+
+          playerPosRef.current = nextPos;
+          setPlayerPos(nextPos);
+          attemptCatch(nextPos);
+        }, 35);
+        return () => clearInterval(moveLoop);
+      }, [isGameOver, attemptCatch]);
+
+      // Spawn Compsognathus interval 1200ms
+      useEffect(() => {
+        if (isGameOver) return;
+        const spawner = setInterval(() => {
+          if (compysRef.current.length >= 4) return;
+          const newCompy = {
+            id: Date.now() + Math.random(),
+            x: Math.random() * 80 + 10,
+            y: Math.random() * 75 + 12,
+            spawnTime: Date.now(),
+            duration: Math.floor(Math.random() * 800) + 2100,
+            facingLeft: Math.random() > 0.5
+          };
+          setCompys((prev) => [...prev, newCompy]);
+        }, 1200);
+        return () => clearInterval(spawner);
+      }, [isGameOver]);
+
+      // Timer & Win Condition (>= 20)
+      useEffect(() => {
+        if (isGameOver) return;
+        const timer = setInterval(() => {
+          setTimeLeft((t) => {
+            if (t <= 1) {
+              clearInterval(timer);
+              if (caughtCountRef.current >= 20) {
+                sound.playWin();
+                onStagePass();
+              } else {
+                sound.playFail();
+                setIsGameOver(true);
+              }
+              return 0;
+            }
+            return t - 1;
+          });
+        }, 1000);
+        return () => clearInterval(timer);
+      }, [isGameOver, onStagePass]);
+
+      useEffect(() => {
+        if (isGameOver) return;
+        const gameLoop = setInterval(() => {
+          const now = Date.now();
+          setCompys((prev) => prev.filter((c) => now - c.spawnTime < c.duration));
+          attemptCatch(playerPosRef.current);
+        }, 50);
+        return () => clearInterval(gameLoop);
+      }, [isGameOver, attemptCatch]);
+
+      return (
+        <div
+          ref={containerRef}
+          onMouseMove={handlePointerMove}
+          onTouchMove={handlePointerMove}
+          className="relative w-full h-full min-h-[550px] bg-gradient-to-b from-[#785938] via-[#5A3E26] to-[#3B2514] overflow-hidden select-none cursor-crosshair"
+        >
+          {/* Ambient Bushes and Rocks */}
+          <div className="absolute top-1/4 left-1/5 text-4xl opacity-80 pointer-events-none">🌿</div>
+          <div className="absolute top-2/3 right-1/4 text-4xl opacity-80 pointer-events-none">🪨</div>
+          <div className="absolute bottom-1/6 left-1/3 text-4xl opacity-80 pointer-events-none">🌿</div>
+          <div className="absolute top-1/3 right-1/5 text-3xl opacity-80 pointer-events-none">🌱</div>
+
+          {/* HUD */}
+          <div className="absolute top-3 left-4 right-4 flex justify-between items-center z-30 pointer-events-none">
+            <div className="bg-black/60 px-4 py-1.5 rounded-full border border-amber-500 text-amber-200 text-xs font-bold">
+              ⏱️ 倒數：<span className="text-base text-yellow-300 font-mono">{timeLeft}s</span>
+            </div>
+            <div className="bg-[#6E7B36] text-white px-4 py-1.5 rounded-full text-xs font-black shadow-md">
+              捕獲美頜龍：<span className={`text-base font-mono ${caughtCount >= 20 ? 'text-yellow-300 animate-pulse' : ''}`}>{caughtCount} / 20 隻</span>
+            </div>
+          </div>
+
+          {/* Compsognathus */}
+          {compys.map((c) => (
+            <div
+              key={c.id}
+              className="absolute w-14 h-10 transition-all duration-300"
+              style={{
+                left: `${c.x}%`,
+                top: `${c.y}%`,
+                transform: `translate(-50%, -50%) scaleX(${c.facingLeft ? -1 : 1})`
+              }}
+            >
+              <CompsognathusAvatar />
+            </div>
+          ))}
+
+          {/* T-Rex */}
+          <div
+            className="absolute w-32 h-24 origin-center transition-transform duration-75"
+            style={{
+              left: `${playerPos.x}%`,
+              top: `${playerPos.y}%`,
+              transform: `translate(-50%, -50%) scaleX(${facingLeft ? -1 : 1})`
+            }}
+          >
+            <TRexAvatar isBiting={isBiting} />
+          </div>
+
+          {/* Floating Texts */}
+          {floatingTexts.map((ft) => (
+            <div
+              key={ft.id}
+              className="absolute text-xs font-black text-amber-300 animate-float-text bg-black/70 px-2.5 py-0.5 rounded-full border border-amber-400"
+              style={{ left: `${ft.x}%`, top: `${ft.y}%` }}
+            >
+              {ft.text}
+            </div>
+          ))}
+
+          {isGameOver && (
+            <GameOverModal
+              reason="starve"
+              stageNumber={4}
+              message={`30秒時間到！你僅捕捉到 ${caughtCount} 隻美頜龍（目標需 20 隻），因掠食不足霸王龍餓死失敗了！`}
+              onRetry={resetGame}
+              onRestartAll={onRestartAll}
+              onHome={onHome}
+            />
+          )}
+        </div>
+      );
+    };
+
+    // ==========================================
+    // 🌟 10. EndingCutscene (Meteor, Ruins, Morph, Story & Replay)
+    // ==========================================
+    const EndingCutscene = ({ onRestart, onHome, onSelectStage }) => {
+      const [phase, setPhase] = useState('VICTORY');
+
+      useEffect(() => {
+        sound.playWin();
+        if (window.confetti) {
+          window.confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+        }
+        const timer1 = setTimeout(() => setPhase('METEOR_APPROACH'), 3200);
+        return () => clearTimeout(timer1);
+      }, []);
+
+      useEffect(() => {
+        if (phase === 'METEOR_APPROACH') {
+          const timer = setTimeout(() => {
+            sound.playMeteorExplosion();
+            setPhase('EXPLOSION');
+          }, 2500);
+          return () => clearTimeout(timer);
+        }
+        if (phase === 'EXPLOSION') {
+          const timer = setTimeout(() => setPhase('RUINS'), 2000);
+          return () => clearTimeout(timer);
+        }
+        if (phase === 'RUINS') {
+          const timer = setTimeout(() => {
+            sound.playFeatherCollect();
+            setPhase('FEATHER_MORPH');
+          }, 2800);
+          return () => clearTimeout(timer);
+        }
+        if (phase === 'FEATHER_MORPH') {
+          const timer = setTimeout(() => {
+            sound.playBirdChirp();
+            setPhase('FINAL_REVELATION');
+          }, 3500);
+          return () => clearTimeout(timer);
+        }
+      }, [phase]);
+
+      return (
+        <div className="relative w-full h-full min-h-[600px] flex flex-col items-center justify-center p-4 bg-black text-white select-none">
+          {phase === 'VICTORY' && (
+            <div className="max-w-md text-center bg-[#FAF3E0] border-4 border-[#D9B99B] rounded-[36px] p-8 shadow-2xl flex flex-col items-center text-[#4A3728]">
+              <div className="text-5xl mb-3 animate-bounce">🏆</div>
+              <h2 className="text-3xl font-black text-[#6E7B36] mb-2">🎉 恭喜全部通關！</h2>
+              <p className="text-sm text-[#5D4E42] mb-4 leading-relaxed font-medium">
+                太厲害了！你成功經歷了小盜龍羽毛保暖、天空滑翔爭霸、深海巨獸掠食，以及霸王龍對美頜龍的終極追捕！
+              </p>
+              <div className="text-xs text-[#E67E22] font-bold animate-pulse">遠古時代的命運即將揭曉...</div>
+            </div>
+          )}
+
+          {phase === 'METEOR_APPROACH' && (
+            <div className="text-center">
+              <span className="px-4 py-1 rounded-full bg-red-600/40 border border-red-500 text-red-300 font-bold text-xs">
+                🔥 天降浩劫 · 白堊紀末期大滅絕
+              </span>
+              <h3 className="text-3xl font-black text-red-400 mt-4 animate-pulse">
+                然而……命運不可逆轉的巨變降臨了！
+              </h3>
+              <div className="text-6xl mt-8 animate-bounce">☄️ 🌎</div>
+            </div>
+          )}
+
+          {phase === 'EXPLOSION' && (
+            <div className="text-center p-6 bg-red-600 rounded-3xl animate-pulse">
+              <h2 className="text-4xl sm:text-5xl font-black text-yellow-200">💥 毀滅性的撞擊！</h2>
+              <p className="text-stone-100 text-base mt-4 font-bold max-w-md">
+                即使玩家全力過關，恐龍統治的時代依然在巨變中走向了終結……
+              </p>
+            </div>
+          )}
+
+          {phase === 'RUINS' && (
+            <div className="text-center max-w-md">
+              <p className="text-stone-400 text-lg italic leading-relaxed">
+                天空被厚厚的塵埃籠罩，巨獸們的身影漸漸消失在廢墟之中……
+              </p>
+              <div className="my-6 text-3xl animate-pulse">🌫️ 🌋 🌫️</div>
+              <p className="text-amber-400 text-sm">然而……在死寂與廢墟的正中央……</p>
+            </div>
+          )}
+
+          {phase === 'FEATHER_MORPH' && (
+            <div className="text-center">
+              <span className="text-xs text-amber-300 font-mono">✨ 生命的奇蹟演化 · The Miracle of Evolution</span>
+              <div className="text-7xl my-6 animate-pulse">🪶</div>
+              <div className="bg-stone-900/90 px-4 py-1.5 rounded-full border border-amber-400 text-amber-200 text-xs font-bold">
+                一根羽毛在廢墟中央飄落，逐漸綻放出新的生命輪廓……
+              </div>
+            </div>
+          )}
+
+          {phase === 'FINAL_REVELATION' && (
+            <div className="w-full max-w-xl bg-[#FAF3E0] border-4 border-[#D9B99B] rounded-[36px] p-6 text-center text-[#4A3728] shadow-2xl flex flex-col items-center">
+              <ModernBirdAvatar className="w-28 h-24 mb-2" />
+              <div className="px-3 py-0.5 bg-[#8B9A46]/20 text-[#6E7B36] text-xs font-black rounded-full mb-2">
+                演化的真相 · The Secret of Dinosaurs
+              </div>
+              <h2 className="text-2xl font-black text-[#6E7B36] mb-3">恐龍從未真正離去！</h2>
+              <div className="p-4 bg-white/90 rounded-2xl border-2 border-[#D9B99B] text-xs sm:text-sm leading-relaxed text-[#5D4E42] space-y-2 mb-4 font-medium text-justify sm:text-center">
+                <p>雖然大滅絕終結了陸地巨獸的時代，但少數披著羽毛的小型恐龍，依靠著羽毛的保暖與滑翔飛行，奇蹟般地在浩劫中存活了下來！</p>
+                <p className="font-bold text-[#4A3728]">
+                  牠們經歷漫長歲月演化成了今天的<span className="text-[#E67E22] font-black underline">「鳥類」</span>——此時此刻，牠們依然翱翔在藍天中，生活在你我的身邊！
+                </p>
+              </div>
+              <div className="w-full border-t-2 border-[#D9B99B] pt-3 mb-3">
+                <div className="text-xs text-[#9B7E6F] font-bold mb-2">重溫指定關卡：</div>
+                <div className="grid grid-cols-4 gap-2 text-xs">
+                  <button onClick={() => onSelectStage(1)} className="p-2 bg-white rounded-xl border-2 border-[#D9B99B] font-bold cursor-pointer hover:bg-stone-50">第1關</button>
+                  <button onClick={() => onSelectStage(2)} className="p-2 bg-white rounded-xl border-2 border-[#D9B99B] font-bold cursor-pointer hover:bg-stone-50">第2關</button>
+                  <button onClick={() => onSelectStage(3)} className="p-2 bg-white rounded-xl border-2 border-[#D9B99B] font-bold cursor-pointer hover:bg-stone-50">第3關</button>
+                  <button onClick={() => onSelectStage(4)} className="p-2 bg-white rounded-xl border-2 border-[#D9B99B] font-bold cursor-pointer hover:bg-stone-50">第4關</button>
+                </div>
+              </div>
+              <div className="w-full flex gap-3">
+                <button
+                  onClick={() => { sound.playWin(); onRestart(); }}
+                  className="flex-1 py-3 bg-[#E67E22] hover:bg-[#D35400] text-white font-black rounded-full shadow-lg transition active:scale-95 cursor-pointer text-sm"
+                >
+                  🔄 重新玩一次全遊戲
+                </button>
+                <button
+                  onClick={() => { sound.playEat(); onHome(); }}
+                  className="py-3 px-5 bg-white hover:bg-stone-50 text-[#4A3728] font-bold rounded-full border-2 border-[#D9B99B] shadow-sm transition active:scale-95 cursor-pointer text-sm"
+                >
+                  🏠 回首頁
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    };
+
+    // ==========================================
+    // 🏠 11. MainMenu Component
+    // ==========================================
+    const MainMenu = ({ onStartGame, isMuted, onToggleMute }) => {
+      const [dinoPos, setDinoPos] = useState(15);
+      const [direction, setDirection] = useState(1);
+
+      useEffect(() => {
+        const interval = setInterval(() => {
+          setDinoPos((prev) => {
+            if (prev >= 80) {
+              setDirection(-1);
+              return prev - 0.4;
+            } else if (prev <= 12) {
+              setDirection(1);
+              return prev + 0.4;
+            }
+            return prev + direction * 0.4;
+          });
+        }, 30);
+        return () => clearInterval(interval);
+      }, [direction]);
+
+      return (
+        <div className="relative w-full h-full min-h-[600px] flex flex-col items-center justify-between p-4 sm:p-6 bg-[#FAF3E0] text-[#4A3728] select-none">
+          {/* Header */}
+          <nav className="w-full max-w-4xl flex justify-between items-center z-10 pt-2 px-2">
+            <div className="flex items-center gap-2">
+              <div className="w-10 h-10 bg-[#8B9A46] rounded-full flex items-center justify-center border-2 border-[#6E7B36] text-xl shadow-md">
+                🦕
+              </div>
+              <div>
+                <span className="text-xl font-black text-[#6E7B36] block leading-none">DINO DISCOVERY</span>
+                <span className="text-[10px] font-bold text-[#9B7E6F] tracking-widest uppercase">立體影片巡禮遊戲</span>
+              </div>
+            </div>
+            <button
+              onClick={onToggleMute}
+              className="px-3.5 py-1.5 rounded-full border-2 border-[#D9B99B] bg-white/80 hover:bg-white text-xs font-bold text-[#4A3728] shadow-sm cursor-pointer"
+            >
+              {isMuted ? "🔇 SOUND: OFF" : "🔊 SOUND: ON"}
+            </button>
+          </nav>
+
+          {/* Running Dino Strip */}
+          <div className="w-full max-w-2xl relative h-24 z-10 my-1 px-6 flex items-end">
+            <div
+              className="absolute bottom-1 transition-transform duration-75 origin-bottom"
+              style={{
+                left: `${dinoPos}%`,
+                transform: `translateX(-50%) scaleX(${direction})`
+              }}
+            >
+              <CuteMainDino className="w-24 h-20" isWalking={true} />
+            </div>
+            <div className="w-full flex items-center justify-between pb-1 border-b-2 border-dashed border-[#D9B99B]/60 text-xs text-[#9B7E6F]">
+              <span>🌿</span>
+              <span>🐾 🐾 🐾 🐾 🐾 🐾 🐾 🐾</span>
+              <span>🌱</span>
+            </div>
+          </div>
+
+          {/* Center Card */}
+          <div className="w-full max-w-xl bg-white/90 p-6 sm:p-8 rounded-[36px] border-4 border-[#D9B99B] shadow-2xl text-center flex flex-col items-center my-auto z-10">
+            <div className="px-3 py-0.5 bg-[#8B9A46]/20 text-[#6E7B36] text-xs font-black rounded-full mb-1">
+              The Great Dinosaur
+            </div>
+            <h1 className="text-3xl font-black text-[#6E7B36]">立體影片《恐龍的秘密》</h1>
+            <div className="text-base font-serif italic text-[#9B7E6F] font-semibold mb-3">The Great Dinosaur</div>
+
+            <div className="p-4 bg-[#FAF3E0] rounded-2xl border-2 border-[#D9B99B] text-sm text-[#5D4E42] leading-relaxed font-medium mb-4 text-justify sm:text-center">
+              喜歡恐龍嗎？了解恐龍嗎？想更認識恐龍嗎？<br />
+              那就請來收看立體影片<span className="text-[#E67E22] font-black">《恐龍的秘密 The great dinosaur》</span>，並且玩玩這款小遊戲吧！
+            </div>
+
+            <button
+              onClick={() => { sound.playWin(); onStartGame(); }}
+              className="px-10 py-3.5 bg-[#E67E22] hover:bg-[#D35400] text-white font-black text-lg rounded-full shadow-lg transition active:scale-95 cursor-pointer"
+            >
+              進入遊戲 ▶
+            </button>
+          </div>
+
+          {/* Level Badges */}
+          <div className="w-full max-w-xl grid grid-cols-4 gap-2 z-10 mb-2 text-center text-xs font-bold text-[#5D4E42]">
+            <div className="flex flex-col items-center">
+              <div className="w-12 h-12 rounded-2xl bg-[#D9B99B] border-2 border-white shadow-md flex items-center justify-center text-xl mb-1">🪶</div>
+              <span>LV 1: 禦寒</span>
+            </div>
+            <div className="flex flex-col items-center">
+              <div className="w-12 h-12 rounded-2xl bg-[#A5C9CA] border-2 border-white shadow-md flex items-center justify-center text-xl mb-1">☁️</div>
+              <span>LV 2: 空戰</span>
+            </div>
+            <div className="flex flex-col items-center">
+              <div className="w-12 h-12 rounded-2xl bg-[#395B64] border-2 border-white shadow-md flex items-center justify-center text-xl mb-1 text-white">🌊</div>
+              <span>LV 3: 海域</span>
+            </div>
+            <div className="flex flex-col items-center">
+              <div className="w-12 h-12 rounded-2xl bg-[#A27B5C] border-2 border-white shadow-md flex items-center justify-center text-xl mb-1 text-white">🦖</div>
+              <span>LV 4: 霸主</span>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    // ==========================================
+    // 🚀 12. Main Application Container
+    // ==========================================
+    const App = () => {
+      const [stage, setStage] = useState('MAIN_MENU');
+      const [isMuted, setIsMuted] = useState(false);
+      const [stage2Char, setStage2Char] = useState('archaeopteryx');
+      const [stage3Char, setStage3Char] = useState('elasmosaurus');
+
+      const toggleMute = () => {
+        const next = !isMuted;
+        setIsMuted(next);
+        sound.enabled = !next;
+      };
+
+      const getStageInfo = () => {
+        switch (stage) {
+          case 'STAGE_1_INTRO':
+          case 'STAGE_1_PLAY':
+            return { num: 1, name: '小盜龍禦寒生存' };
+          case 'STAGE_2_INTRO':
+          case 'STAGE_2_PLAY':
+            return { num: 2, name: '始祖鳥 vs 翼龍 空戰競賽' };
+          case 'STAGE_3_INTRO':
+          case 'STAGE_3_PLAY':
+            return { num: 3, name: '薄板龍 vs 滄龍 深海狂潮' };
+          case 'STAGE_4_INTRO':
+          case 'STAGE_4_PLAY':
+            return { num: 4, name: '霸王龍伏擊美頜龍' };
+          default:
+            return { num: undefined, name: undefined };
+        }
+      };
+
+      const { num, name } = getStageInfo();
+
+      return (
+        <div className="w-full h-full flex flex-col overflow-hidden bg-[#FAF3E0]">
+          {stage !== 'MAIN_MENU' && stage !== 'EPILOGUE' && (
+            <HeaderNav
+              currentStageNumber={num}
+              stageName={name}
+              isMuted={isMuted}
+              onToggleMute={toggleMute}
+              onHome={() => setStage('MAIN_MENU')}
+            />
+          )}
+
+          <div className="flex-1 w-full h-full relative overflow-hidden flex flex-col">
+            {stage === 'MAIN_MENU' && (
+              <MainMenu
+                onStartGame={() => setStage('STAGE_1_INTRO')}
+                isMuted={isMuted}
+                onToggleMute={toggleMute}
+              />
+            )}
+
+            {stage === 'STAGE_1_INTRO' && (
+              <StageIntroModal
+                stageNumber={1}
+                onStartStage={() => setStage('STAGE_1_PLAY')}
+                onHome={() => setStage('MAIN_MENU')}
+              />
+            )}
+
+            {stage === 'STAGE_1_PLAY' && (
+              <Stage1Game
+                onStagePass={() => setStage('STAGE_2_INTRO')}
+                onRestartAll={() => setStage('STAGE_1_INTRO')}
+                onHome={() => setStage('MAIN_MENU')}
+              />
+            )}
+
+            {stage === 'STAGE_2_INTRO' && (
+              <StageIntroModal
+                stageNumber={2}
+                onStartStage={() => setStage('STAGE_2_PLAY')}
+                onHome={() => setStage('MAIN_MENU')}
+                stage2Char={stage2Char}
+                setStage2Char={setStage2Char}
+              />
+            )}
+
+            {stage === 'STAGE_2_PLAY' && (
+              <Stage2Game
+                playerCharacter={stage2Char}
+                onStagePass={() => setStage('STAGE_3_INTRO')}
+                onRestartAll={() => setStage('STAGE_1_INTRO')}
+                onHome={() => setStage('MAIN_MENU')}
+              />
+            )}
+
+            {stage === 'STAGE_3_INTRO' && (
+              <StageIntroModal
+                stageNumber={3}
+                onStartStage={() => setStage('STAGE_3_PLAY')}
+                onHome={() => setStage('MAIN_MENU')}
+                stage3Char={stage3Char}
+                setStage3Char={setStage3Char}
+              />
+            )}
+
+            {stage === 'STAGE_3_PLAY' && (
+              <Stage3Game
+                playerCharacter={stage3Char}
+                onStagePass={() => setStage('STAGE_4_INTRO')}
+                onRestartAll={() => setStage('STAGE_1_INTRO')}
+                onHome={() => setStage('MAIN_MENU')}
+              />
+            )}
+
+            {stage === 'STAGE_4_INTRO' && (
+              <StageIntroModal
+                stageNumber={4}
+                onStartStage={() => setStage('STAGE_4_PLAY')}
+                onHome={() => setStage('MAIN_MENU')}
+              />
+            )}
+
+            {stage === 'STAGE_4_PLAY' && (
+              <Stage4Game
+                onStagePass={() => setStage('EPILOGUE')}
+                onRestartAll={() => setStage('STAGE_1_INTRO')}
+                onHome={() => setStage('MAIN_MENU')}
+              />
+            )}
+
+            {stage === 'EPILOGUE' && (
+              <EndingCutscene
+                onRestart={() => setStage('STAGE_1_INTRO')}
+                onHome={() => setStage('MAIN_MENU')}
+                onSelectStage={(s) => {
+                  if (s === 1) setStage('STAGE_1_INTRO');
+                  else if (s === 2) setStage('STAGE_2_INTRO');
+                  else if (s === 3) setStage('STAGE_3_INTRO');
+                  else if (s === 4) setStage('STAGE_4_INTRO');
+                }}
+              />
+            )}
+          </div>
+        </div>
+      );
+    };
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>

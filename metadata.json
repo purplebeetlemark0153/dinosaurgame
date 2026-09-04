@@ -1,0 +1,6 @@
+{
+  "name": "恐龍的秘密 The great dinosaur",
+  "description": "體驗《恐龍的秘密 The great dinosaur》四大多重關卡：小盜龍羽毛保暖、始祖鳥與無齒翼龍空中獵食、薄板龍與滄龍海中競技、霸王龍追捕美頜龍，以及終章羽化成鳥的演化奇蹟。",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
