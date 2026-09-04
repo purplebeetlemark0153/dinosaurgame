@@ -606,6 +606,91 @@
     };
 
     // ==========================================
+    // 🪰 Vector Prey Avatars (Never depend on emoji fonts!)
+    // ==========================================
+    const DragonflyAvatar = ({ className = 'w-7 h-7' }) => (
+      <svg viewBox="0 0 40 40" className={`${className} filter drop-shadow-[0_0_8px_rgba(56,189,248,0.9)] overflow-visible`}>
+        <circle cx="20" cy="20" r="16" fill="rgba(56,189,248,0.2)" />
+        <ellipse cx="12" cy="14" rx="10" ry="3.5" fill="rgba(224,242,254,0.85)" stroke="#38BDF8" strokeWidth="1" transform="rotate(-20 12 14)" />
+        <ellipse cx="28" cy="14" rx="10" ry="3.5" fill="rgba(224,242,254,0.85)" stroke="#38BDF8" strokeWidth="1" transform="rotate(20 28 14)" />
+        <ellipse cx="13" cy="22" rx="8" ry="3" fill="rgba(186,230,253,0.75)" stroke="#0284C7" strokeWidth="0.8" transform="rotate(-15 13 22)" />
+        <ellipse cx="27" cy="22" rx="8" ry="3" fill="rgba(186,230,253,0.75)" stroke="#0284C7" strokeWidth="0.8" transform="rotate(15 27 22)" />
+        <line x1="20" y1="8" x2="20" y2="34" stroke="#0284C7" strokeWidth="3" strokeLinecap="round" />
+        <ellipse cx="20" cy="14" rx="3" ry="5" fill="#38BDF8" stroke="#0369A1" strokeWidth="1" />
+        <circle cx="18" cy="8" r="2.5" fill="#38BDF8" />
+        <circle cx="22" cy="8" r="2.5" fill="#38BDF8" />
+        <circle cx="18" cy="8" r="1" fill="#0369A1" />
+        <circle cx="22" cy="8" r="1" fill="#0369A1" />
+      </svg>
+    );
+
+    const BeetleAvatar = ({ className = 'w-7 h-7' }) => (
+      <svg viewBox="0 0 40 40" className={`${className} filter drop-shadow-[0_0_8px_rgba(245,158,11,0.9)] overflow-visible`}>
+        <circle cx="20" cy="20" r="16" fill="rgba(245,158,11,0.2)" />
+        <path d="M 17 12 Q 13 6 10 7" fill="none" stroke="#78350F" strokeWidth="1.5" strokeLinecap="round" />
+        <path d="M 23 12 Q 27 6 30 7" fill="none" stroke="#78350F" strokeWidth="1.5" strokeLinecap="round" />
+        <path d="M 12 18 L 6 15 M 12 22 L 5 22 M 12 26 L 6 30" stroke="#78350F" strokeWidth="1.5" strokeLinecap="round" />
+        <path d="M 28 18 L 34 15 M 28 22 L 35 22 M 28 26 L 34 30" stroke="#78350F" strokeWidth="1.5" strokeLinecap="round" />
+        <ellipse cx="20" cy="23" rx="8" ry="10" fill="#D97706" stroke="#78350F" strokeWidth="1.5" />
+        <line x1="20" y1="14" x2="20" y2="33" stroke="#78350F" strokeWidth="1.2" />
+        <rect x="15" y="13" width="10" height="5" rx="2" fill="#B45309" stroke="#78350F" strokeWidth="1.2" />
+        <circle cx="20" cy="11" r="3.5" fill="#78350F" />
+        <ellipse cx="17" cy="21" rx="2" ry="5" fill="#FDE68A" opacity="0.6" />
+      </svg>
+    );
+
+    const LizardAvatar = ({ className = 'w-7 h-7' }) => (
+      <svg viewBox="0 0 40 40" className={`${className} filter drop-shadow-[0_0_8px_rgba(34,197,94,0.9)] overflow-visible`}>
+        <circle cx="20" cy="20" r="16" fill="rgba(34,197,94,0.2)" />
+        <path d="M 20 28 Q 22 36 29 34 Q 32 30 25 26" fill="#15803D" stroke="#166534" strokeWidth="1" />
+        <path d="M 14 18 L 8 15 M 14 24 L 8 27" stroke="#166534" strokeWidth="1.8" strokeLinecap="round" />
+        <path d="M 26 18 L 32 15 M 26 24 L 32 27" stroke="#166534" strokeWidth="1.8" strokeLinecap="round" />
+        <ellipse cx="20" cy="20" rx="6" ry="10" fill="#22C55E" stroke="#166534" strokeWidth="1.5" />
+        <path d="M 20 12 Q 21 20 20 28" fill="none" stroke="#86EFAC" strokeWidth="1.5" strokeLinecap="round" />
+        <polygon points="20,7 15,14 25,14" fill="#16A34A" stroke="#166534" strokeWidth="1.2" />
+        <circle cx="17" cy="11" r="1.2" fill="#FEF08A" />
+        <circle cx="23" cy="11" r="1.2" fill="#FEF08A" />
+      </svg>
+    );
+
+    const CoelacanthAvatar = ({ className = 'w-8 h-7' }) => (
+      <svg viewBox="0 0 44 32" className={`${className} filter drop-shadow-[0_0_8px_rgba(56,189,248,0.9)] overflow-visible`}>
+        <circle cx="22" cy="16" r="15" fill="rgba(6,182,212,0.25)" />
+        <path d="M 10 16 L 3 9 L 6 16 L 3 23 Z" fill="#0284C7" stroke="#0369A1" strokeWidth="1" />
+        <path d="M 16 22 Q 13 28 10 26" fill="#38BDF8" stroke="#0369A1" strokeWidth="1" />
+        <path d="M 16 10 Q 13 4 10 6" fill="#38BDF8" stroke="#0369A1" strokeWidth="1" />
+        <ellipse cx="23" cy="16" rx="14" ry="8.5" fill="#0284C7" stroke="#0369A1" strokeWidth="1.5" />
+        <path d="M 20 11 Q 23 16 20 21 M 25 11 Q 28 16 25 21" stroke="#38BDF8" strokeWidth="1.2" fill="none" />
+        <circle cx="31" cy="14" r="2.5" fill="#FEF08A" stroke="#0369A1" strokeWidth="0.8" />
+        <circle cx="32" cy="14" r="1.2" fill="#0F172A" />
+      </svg>
+    );
+
+    const AmmoniteAvatar = ({ className = 'w-8 h-7' }) => (
+      <svg viewBox="0 0 40 36" className={`${className} filter drop-shadow-[0_0_8px_rgba(251,191,36,0.9)] overflow-visible`}>
+        <circle cx="20" cy="18" r="15" fill="rgba(245,158,11,0.25)" />
+        <path d="M 28 18 Q 36 15 37 12 M 28 20 Q 37 20 38 18 M 28 22 Q 36 24 37 26" stroke="#F59E0B" strokeWidth="1.8" strokeLinecap="round" fill="none" />
+        <circle cx="18" cy="18" r="12" fill="#F59E0B" stroke="#B45309" strokeWidth="1.5" />
+        <circle cx="17" cy="18" r="8" fill="#FBBF24" stroke="#B45309" strokeWidth="1.2" />
+        <circle cx="16" cy="18" r="4.5" fill="#FEF3C7" stroke="#B45309" strokeWidth="1" />
+        <path d="M 12 8 L 14 11 M 19 6 L 19 10 M 26 9 L 24 13 M 28 16 L 24 17 M 26 24 L 23 22" stroke="#B45309" strokeWidth="1.2" strokeLinecap="round" />
+        <circle cx="27" cy="16" r="1.8" fill="#000" />
+      </svg>
+    );
+
+    const SquidAvatar = ({ className = 'w-8 h-7' }) => (
+      <svg viewBox="0 0 42 36" className={`${className} filter drop-shadow-[0_0_10px_rgba(244,63,94,0.9)] overflow-visible`}>
+        <circle cx="21" cy="18" r="15" fill="rgba(244,63,94,0.25)" />
+        <polygon points="6,18 14,8 14,28" fill="#E11D48" stroke="#9F1239" strokeWidth="1" />
+        <ellipse cx="18" cy="18" rx="10" ry="6" fill="#F43F5E" stroke="#9F1239" strokeWidth="1.5" />
+        <ellipse cx="26" cy="18" rx="4" ry="5" fill="#FB7185" stroke="#9F1239" strokeWidth="1.2" />
+        <circle cx="26" cy="16" r="1.8" fill="#FEF08A" stroke="#000" strokeWidth="0.8" />
+        <circle cx="26" cy="16" r="0.9" fill="#000" />
+        <path d="M 29 15 Q 36 12 40 10 M 29 17 Q 37 17 41 16 M 29 19 Q 37 20 41 22 M 29 21 Q 36 24 40 26" stroke="#E11D48" strokeWidth="1.5" strokeLinecap="round" fill="none" />
+      </svg>
+    );
+
+    // ==========================================
     // 🎮 6. Stage 1 Game: Microraptor Feather Collect
     // ==========================================
     const Stage1Game = ({ onStagePass, onRestartAll, onHome }) => {
@@ -724,6 +809,32 @@
           onTouchMove={handlePointerMove}
           className="relative w-full h-full min-h-[550px] bg-gradient-to-b from-sky-900 via-slate-800 to-stone-900 overflow-hidden select-none cursor-crosshair"
         >
+          {/* Ancient Jurassic Primeval Fern Forest Background */}
+          <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-45">
+            <svg viewBox="0 0 1000 650" preserveAspectRatio="none" className="w-full h-full">
+              <defs>
+                <linearGradient id="s1FernGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#15803D" />
+                  <stop offset="100%" stopColor="#14532D" />
+                </linearGradient>
+              </defs>
+              {/* Rolling Ancient Forest Ground */}
+              <path d="M 0 450 Q 200 410 450 440 T 800 420 T 1000 450 L 1000 650 L 0 650 Z" fill="#2E2016" />
+              <path d="M 0 510 Q 300 470 600 520 T 1000 490 L 1000 650 L 0 650 Z" fill="#1C140E" opacity="0.9" />
+              {/* Mossy rocks */}
+              <ellipse cx="280" cy="560" rx="90" ry="40" fill="#3D4A2D" />
+              <ellipse cx="720" cy="580" rx="110" ry="45" fill="#382A1E" />
+              {/* Left Ancient Tree Fern */}
+              <path d="M 90 650 Q 105 500 120 370 Q 135 500 150 650 Z" fill="#2E2016" stroke="#1A120C" strokeWidth="3" />
+              <path d="M 120 370 Q 30 330 -40 380 Q 20 360 120 370 Z" fill="url(#s1FernGrad)" />
+              <path d="M 120 370 Q 220 310 310 360 Q 220 345 120 370 Z" fill="url(#s1FernGrad)" />
+              {/* Right Ancient Tree Fern */}
+              <path d="M 850 650 Q 870 510 885 390 Q 900 510 920 650 Z" fill="#2E2016" stroke="#1A120C" strokeWidth="3" />
+              <path d="M 885 390 Q 770 330 680 390 Q 770 370 885 390 Z" fill="url(#s1FernGrad)" />
+              <path d="M 885 390 Q 980 330 1060 375 Q 965 370 885 390 Z" fill="url(#s1FernGrad)" />
+            </svg>
+          </div>
+
           {/* Top HUD */}
           <div className="absolute top-3 left-4 right-4 flex justify-between items-center z-30 pointer-events-none">
             <div className="bg-black/60 px-4 py-1.5 rounded-full border border-sky-400 text-sky-200 text-xs font-bold">
@@ -746,16 +857,45 @@
             </div>
           </div>
 
-          {/* Feathers */}
-          {feathers.map((f) => (
-            <div
-              key={f.id}
-              className="absolute text-2xl animate-bounce"
-              style={{ left: `${f.x}%`, top: `${f.y}%`, transform: 'translate(-50%, -50%)' }}
-            >
-              🪶
-            </div>
-          ))}
+          {/* Feathers (Vector SVG with Glowing Pod - never fails!) */}
+          {feathers.map((f) => {
+            const isGolden = f.type === 'golden';
+            return (
+              <div
+                key={f.id}
+                className="absolute animate-bounce"
+                style={{ left: `${f.x}%`, top: `${f.y}%`, transform: 'translate(-50%, -50%)' }}
+              >
+                <div
+                  className={`relative flex items-center justify-center w-10 h-10 rounded-full border-2 transition-transform ${
+                    isGolden
+                      ? 'bg-amber-100/90 border-amber-400 shadow-[0_0_15px_rgba(251,191,36,0.9)] scale-110'
+                      : 'bg-sky-100/90 border-sky-400 shadow-[0_0_12px_rgba(56,189,248,0.8)]'
+                  }`}
+                >
+                  <svg viewBox="0 0 32 32" className="w-7 h-7 drop-shadow-md">
+                    <path
+                      d="M 28 4 C 18 6 8 16 4 28 C 16 26 26 16 28 4 Z"
+                      fill={isGolden ? '#FBBF24' : '#60A5FA'}
+                      stroke={isGolden ? '#B45309' : '#1D4ED8'}
+                      strokeWidth="1.5"
+                    />
+                    <line
+                      x1="28"
+                      y1="4"
+                      x2="4"
+                      y2="28"
+                      stroke={isGolden ? '#FFFBEB' : '#EFF6FF'}
+                      strokeWidth="1.5"
+                    />
+                  </svg>
+                  <span className="absolute -top-1 -right-1 text-[9px] font-black px-1 rounded-full bg-[#E67E22] text-white shadow">
+                    +{f.value}%
+                  </span>
+                </div>
+              </div>
+            );
+          })}
 
           {/* Microraptor Player */}
           <div
@@ -939,6 +1079,21 @@
           onTouchMove={handlePointerMove}
           className="relative w-full h-full min-h-[550px] bg-gradient-to-b from-sky-400 via-amber-100 to-emerald-200 overflow-hidden select-none cursor-crosshair"
         >
+          {/* Mesozoic Sky & Mountain Ridges SVG Background */}
+          <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-40">
+            <svg viewBox="0 0 1000 600" preserveAspectRatio="none" className="w-full h-full">
+              {/* Distant Mountain Peaks */}
+              <polygon points="0,450 160,280 340,480" fill="#64748B" opacity="0.6" />
+              <polygon points="260,480 480,240 700,500" fill="#475569" opacity="0.7" />
+              <polygon points="620,500 820,270 1000,470" fill="#334155" opacity="0.8" />
+              {/* Soaring Jurassic Clouds */}
+              <ellipse cx="200" cy="140" rx="90" ry="32" fill="#FFFFFF" opacity="0.7" />
+              <ellipse cx="260" cy="130" rx="70" ry="28" fill="#FFFFFF" opacity="0.8" />
+              <ellipse cx="750" cy="100" rx="110" ry="36" fill="#FFFFFF" opacity="0.75" />
+              <ellipse cx="820" cy="90" rx="80" ry="30" fill="#FFFFFF" opacity="0.85" />
+            </svg>
+          </div>
+
           {/* HUD */}
           <div className="absolute top-3 left-4 right-4 flex justify-between items-center z-30 pointer-events-none">
             <div className="bg-white/90 px-4 py-1.5 rounded-full border-2 border-[#D9B99B] text-xs font-bold text-[#4A3728]">
@@ -952,14 +1107,25 @@
             </div>
           </div>
 
-          {/* Preys */}
+          {/* Preys (Vector SVG with Glowing Pods - never fails to display!) */}
           {preys.map((p) => (
             <div
               key={p.id}
-              className="absolute text-3xl animate-pulse"
-              style={{ left: `${p.x}%`, top: `${p.y}%`, transform: 'translate(-50%, -50%)' }}
+              className="absolute -translate-x-1/2 -translate-y-1/2 transition-transform duration-75"
+              style={{ left: `${p.x}%`, top: `${p.y}%` }}
             >
-              {p.emoji}
+              <div className="relative bg-white/40 backdrop-blur-md border-2 border-white/70 p-2 rounded-full shadow-[0_0_15px_rgba(255,255,255,0.7)] flex items-center justify-center animate-pulse">
+                {p.type === 'dragonfly' ? (
+                  <DragonflyAvatar className="w-8 h-8" />
+                ) : p.type === 'beetle' ? (
+                  <BeetleAvatar className="w-8 h-8" />
+                ) : (
+                  <LizardAvatar className="w-8 h-8" />
+                )}
+                <span className="absolute -bottom-3 text-[9px] font-black bg-stone-900/90 text-amber-300 px-1.5 py-0.2 rounded-full border border-amber-400 shadow">
+                  +{p.points}
+                </span>
+              </div>
             </div>
           ))}
 
@@ -1153,6 +1319,27 @@
           onTouchMove={handlePointerMove}
           className="relative w-full h-full min-h-[550px] bg-gradient-to-b from-cyan-900 via-blue-950 to-slate-950 overflow-hidden select-none cursor-crosshair"
         >
+          {/* Deep Ocean Underwater Sunbeams & Ambient Bubbles SVG Background */}
+          <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-45">
+            <svg viewBox="0 0 1000 600" preserveAspectRatio="none" className="w-full h-full">
+              <defs>
+                <linearGradient id="s3Sunbeam" x1="0%" y1="0%" x2="40%" y2="100%">
+                  <stop offset="0%" stopColor="#38BDF8" stopOpacity="0.4" />
+                  <stop offset="100%" stopColor="#0284C7" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+              {/* Volumetric sun rays */}
+              <polygon points="120,0 220,0 380,600 240,600" fill="url(#s3Sunbeam)" />
+              <polygon points="450,0 560,0 720,600 580,600" fill="url(#s3Sunbeam)" />
+              <polygon points="780,0 880,0 990,600 860,600" fill="url(#s3Sunbeam)" />
+              {/* Ambient Rising Bubbles */}
+              <circle cx="150" cy="420" r="14" fill="rgba(56,189,248,0.25)" stroke="#38BDF8" strokeWidth="1.5" />
+              <circle cx="320" cy="280" r="10" fill="rgba(56,189,248,0.2)" stroke="#38BDF8" strokeWidth="1" />
+              <circle cx="680" cy="360" r="18" fill="rgba(56,189,248,0.25)" stroke="#38BDF8" strokeWidth="1.5" />
+              <circle cx="840" cy="220" r="12" fill="rgba(56,189,248,0.2)" stroke="#38BDF8" strokeWidth="1" />
+            </svg>
+          </div>
+
           {/* HUD */}
           <div className="absolute top-3 left-4 right-4 flex justify-between items-center z-30 pointer-events-none">
             <div className="bg-black/60 px-4 py-1.5 rounded-full border border-cyan-400 text-cyan-200 text-xs font-bold">
@@ -1166,14 +1353,25 @@
             </div>
           </div>
 
-          {/* Preys */}
+          {/* Preys (Vector SVG with Glowing Pods - never fails!) */}
           {preys.map((p) => (
             <div
               key={p.id}
-              className="absolute text-3xl animate-bounce"
-              style={{ left: `${p.x}%`, top: `${p.y}%`, transform: 'translate(-50%, -50%)' }}
+              className="absolute -translate-x-1/2 -translate-y-1/2 transition-transform duration-75"
+              style={{ left: `${p.x}%`, top: `${p.y}%` }}
             >
-              {p.emoji}
+              <div className="relative bg-teal-950/70 backdrop-blur-md border-2 border-cyan-300 p-2 rounded-full shadow-[0_0_15px_rgba(6,182,212,0.8)] flex items-center justify-center animate-pulse">
+                {p.type === 'coelacanth' ? (
+                  <CoelacanthAvatar className="w-9 h-7" />
+                ) : p.type === 'ammonite' ? (
+                  <AmmoniteAvatar className="w-8 h-7" />
+                ) : (
+                  <SquidAvatar className="w-8 h-7" />
+                )}
+                <span className="absolute -bottom-3 text-[9px] font-black bg-stone-900/95 text-cyan-300 px-1.5 py-0.2 rounded-full border border-cyan-400 shadow">
+                  +{p.points}
+                </span>
+              </div>
             </div>
           ))}
 
@@ -1382,13 +1580,44 @@
           ref={containerRef}
           onMouseMove={handlePointerMove}
           onTouchMove={handlePointerMove}
-          className="relative w-full h-full min-h-[550px] bg-gradient-to-b from-[#785938] via-[#5A3E26] to-[#3B2514] overflow-hidden select-none cursor-crosshair"
+          className="relative w-full h-full min-h-[550px] bg-gradient-to-b from-[#3E2723] via-[#4E342E] to-[#2D1810] overflow-hidden select-none cursor-crosshair"
         >
-          {/* Ambient Bushes and Rocks */}
-          <div className="absolute top-1/4 left-1/5 text-4xl opacity-80 pointer-events-none">🌿</div>
-          <div className="absolute top-2/3 right-1/4 text-4xl opacity-80 pointer-events-none">🪨</div>
-          <div className="absolute bottom-1/6 left-1/3 text-4xl opacity-80 pointer-events-none">🌿</div>
-          <div className="absolute top-1/3 right-1/5 text-3xl opacity-80 pointer-events-none">🌱</div>
+          {/* Prehistoric Earthy Mud Ground Terrain (泥土地質感、裂痕與足跡) */}
+          <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-40">
+            <svg viewBox="0 0 800 600" preserveAspectRatio="none" className="w-full h-full">
+              <defs>
+                <radialGradient id="s4MudPuddle" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stopColor="#1E140C" stopOpacity="0.8" />
+                  <stop offset="80%" stopColor="#3E2723" stopOpacity="0.4" />
+                  <stop offset="100%" stopColor="transparent" stopOpacity="0" />
+                </radialGradient>
+              </defs>
+              <ellipse cx="220" cy="180" rx="90" ry="45" fill="url(#s4MudPuddle)" />
+              <ellipse cx="600" cy="380" rx="120" ry="55" fill="url(#s4MudPuddle)" />
+              <ellipse cx="380" cy="480" rx="80" ry="40" fill="url(#s4MudPuddle)" />
+              {/* Soil cracks */}
+              <path d="M 100 250 L 140 280 L 160 260 L 200 300" stroke="#1F1209" strokeWidth="2.5" fill="none" opacity="0.6" />
+              <path d="M 620 120 L 650 160 L 690 150 L 730 200" stroke="#1F1209" strokeWidth="2" fill="none" opacity="0.6" />
+              <path d="M 450 350 L 480 390 L 460 420 L 510 440" stroke="#1F1209" strokeWidth="2.2" fill="none" opacity="0.6" />
+              {/* Footprints in mud */}
+              <g transform="translate(180, 420) rotate(-25) scale(0.6)" opacity="0.4" fill="#1A0F07">
+                <polygon points="20,10 25,0 30,10 26,30 20,30" />
+                <polygon points="12,14 5,8 15,22" />
+                <polygon points="38,14 45,8 35,22" />
+              </g>
+              <g transform="translate(540, 220) rotate(15) scale(0.7)" opacity="0.4" fill="#1A0F07">
+                <polygon points="20,10 25,0 30,10 26,30 20,30" />
+                <polygon points="12,14 5,8 15,22" />
+                <polygon points="38,14 45,8 35,22" />
+              </g>
+            </svg>
+          </div>
+
+          {/* Ambient Prehistoric Fern Bushes & Rocks */}
+          <div className="absolute top-[22%] left-[18%] text-3xl opacity-80 pointer-events-none drop-shadow-md">🌿</div>
+          <div className="absolute top-[65%] right-[22%] text-3xl opacity-80 pointer-events-none drop-shadow-md">🪨</div>
+          <div className="absolute bottom-[18%] left-[30%] text-3xl opacity-80 pointer-events-none drop-shadow-md">🌿</div>
+          <div className="absolute top-[32%] right-[18%] text-2xl opacity-80 pointer-events-none drop-shadow-md">🌱</div>
 
           {/* HUD */}
           <div className="absolute top-3 left-4 right-4 flex justify-between items-center z-30 pointer-events-none">
@@ -1400,18 +1629,25 @@
             </div>
           </div>
 
-          {/* Compsognathus */}
+          {/* Compsognathus with Glowing Beacon & Alert Tag */}
           {compys.map((c) => (
             <div
               key={c.id}
-              className="absolute w-14 h-10 transition-all duration-300"
+              className="absolute -translate-x-1/2 -translate-y-1/2 z-15 transition-transform animate-pulse"
               style={{
                 left: `${c.x}%`,
                 top: `${c.y}%`,
                 transform: `translate(-50%, -50%) scaleX(${c.facingLeft ? -1 : 1})`
               }}
             >
-              <CompsognathusAvatar />
+              <div className="relative">
+                <div className="absolute -top-3 -right-2 text-[10px] font-black text-amber-300 animate-bounce bg-black/60 px-1 rounded-full border border-amber-400 whitespace-nowrap">
+                  ⚡快抓!
+                </div>
+                <div className="w-14 h-10 filter drop-shadow-[0_0_12px_rgba(74,222,128,1)] bg-emerald-950/40 rounded-full p-1 border border-emerald-400/50">
+                  <CompsognathusAvatar />
+                </div>
+              </div>
             </div>
           ))}
 

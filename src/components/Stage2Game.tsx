@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Stage2Character } from '../types';
 import { ArchaeopteryxAvatar, PteranodonAvatar } from './DinosaurAvatars';
+import { DragonflyAvatar, BeetleAvatar, LizardAvatar } from './PreyAvatars';
 import { GameOverModal } from './GameOverModal';
 import { sound } from '../utils/audio';
 import { Timer, Trophy, Bot, User } from 'lucide-react';
@@ -386,7 +387,7 @@ export const Stage2Game: React.FC<Stage2GameProps> = ({ playerCharacter, onStage
           滑動在空中掠食，時間結束前分數必須超越對手！
         </div>
 
-        {/* Airborne Preys */}
+        {/* Airborne Preys (Vector SVG with high-contrast glowing pod) */}
         {preys.map((prey) => (
           <div
             key={prey.id}
@@ -396,9 +397,15 @@ export const Stage2Game: React.FC<Stage2GameProps> = ({ playerCharacter, onStage
               top: `${prey.y}%`,
             }}
           >
-            <div className="relative bg-white/20 backdrop-blur-sm border border-white/40 p-1.5 rounded-full shadow-lg flex items-center justify-center animate-pulse">
-              <span className="text-xl">{prey.emoji}</span>
-              <span className="absolute -bottom-3 text-[9px] font-black bg-stone-900/80 text-amber-300 px-1 rounded-full border border-stone-700">
+            <div className="relative bg-white/30 backdrop-blur-md border-2 border-white/60 p-2 rounded-full shadow-[0_0_15px_rgba(255,255,255,0.6)] flex items-center justify-center animate-pulse">
+              {prey.type === 'dragonfly' ? (
+                <DragonflyAvatar className="w-8 h-8" />
+              ) : prey.type === 'beetle' ? (
+                <BeetleAvatar className="w-8 h-8" />
+              ) : (
+                <LizardAvatar className="w-8 h-8" />
+              )}
+              <span className="absolute -bottom-3 text-[9px] font-black bg-stone-900/90 text-amber-300 px-1.5 py-0.2 rounded-full border border-amber-400 shadow">
                 +{prey.points}
               </span>
             </div>

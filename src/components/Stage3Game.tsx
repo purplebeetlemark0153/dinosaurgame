@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Stage3Character } from '../types';
 import { ElasmosaurusAvatar, MosasaurusAvatar } from './DinosaurAvatars';
+import { CoelacanthAvatar, AmmoniteAvatar, SquidAvatar } from './PreyAvatars';
 import { GameOverModal } from './GameOverModal';
 import { sound } from '../utils/audio';
 import { Timer, Bot, User, Waves } from 'lucide-react';
@@ -343,7 +344,7 @@ export const Stage3Game: React.FC<Stage3GameProps> = ({ playerCharacter, onStage
           <span>深海水壓阻力特性：{playerIsElasmo ? '薄板龍體型龐大、範圍廣' : '滄龍身軀精悍、游動迅捷'}</span>
         </div>
 
-        {/* Marine Preys */}
+        {/* Marine Preys (Vector SVG with high-contrast glowing pod) */}
         {preys.map((prey) => (
           <div
             key={prey.id}
@@ -353,9 +354,15 @@ export const Stage3Game: React.FC<Stage3GameProps> = ({ playerCharacter, onStage
               top: `${prey.y}%`,
             }}
           >
-            <div className="relative bg-teal-900/40 backdrop-blur-sm border border-cyan-400/40 p-2 rounded-full shadow-[0_0_10px_rgba(6,182,212,0.4)] flex items-center justify-center animate-pulse">
-              <span className="text-2xl">{prey.emoji}</span>
-              <span className="absolute -bottom-3 text-[9px] font-black bg-stone-900/90 text-cyan-300 px-1.5 rounded-full border border-cyan-700">
+            <div className="relative bg-teal-950/70 backdrop-blur-md border-2 border-cyan-300 p-2 rounded-full shadow-[0_0_15px_rgba(6,182,212,0.8)] flex items-center justify-center animate-pulse">
+              {prey.type === 'coelacanth' || prey.type === 'fish' ? (
+                <CoelacanthAvatar className="w-9 h-7" />
+              ) : prey.type === 'ammonite' ? (
+                <AmmoniteAvatar className="w-8 h-7" />
+              ) : (
+                <SquidAvatar className="w-8 h-7" />
+              )}
+              <span className="absolute -bottom-3 text-[9px] font-black bg-stone-900/95 text-cyan-300 px-1.5 py-0.2 rounded-full border border-cyan-400 shadow">
                 +{prey.points}
               </span>
             </div>

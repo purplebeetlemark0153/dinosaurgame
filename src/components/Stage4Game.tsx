@@ -414,10 +414,10 @@ export const Stage4Game: React.FC<Stage4GameProps> = ({ onStagePass, onRestartAl
           >
             <div className="relative">
               {/* Alert flash ring */}
-              <div className="absolute -top-3 -right-2 text-xs font-black text-amber-300 animate-bounce">
+              <div className="absolute -top-3 -right-2 text-xs font-black text-amber-300 animate-bounce bg-black/60 px-1 rounded-full border border-amber-400">
                 ⚡快抓!
               </div>
-              <div className="w-16 h-12 sm:w-20 sm:h-14 filter drop-shadow-[0_0_8px_rgba(74,222,128,0.8)]">
+              <div className="w-16 h-12 sm:w-20 sm:h-14 filter drop-shadow-[0_0_12px_rgba(74,222,128,1)] bg-emerald-950/40 rounded-full p-1 border border-emerald-400/50">
                 <CompsognathusAvatar />
               </div>
             </div>
