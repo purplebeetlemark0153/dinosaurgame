@@ -39,7 +39,7 @@ export const Stage3Game: React.FC<Stage3GameProps> = ({ playerCharacter, onStage
 
   const aiIsElasmo = aiCharacter === 'elasmosaurus';
   const aiHitbox = aiIsElasmo ? 16.0 : 10.0;
-  const aiSpeed = aiIsElasmo ? 0.8 : 1.35;
+  const aiSpeed = aiIsElasmo ? 1.15 : 1.7;
 
   // State
   const [targetPos, setTargetPos] = useState({ x: 30, y: 50 });
@@ -352,6 +352,7 @@ export const Stage3Game: React.FC<Stage3GameProps> = ({ playerCharacter, onStage
             style={{
               left: `${prey.x}%`,
               top: `${prey.y}%`,
+              transform: `translate(-50%, -50%) ${prey.vx < 0 ? 'scaleX(-1)' : 'scaleX(1)'}`,
             }}
           >
             <div className="relative bg-teal-950/70 backdrop-blur-md border-2 border-cyan-300 p-2 rounded-full shadow-[0_0_15px_rgba(6,182,212,0.8)] flex items-center justify-center animate-pulse">

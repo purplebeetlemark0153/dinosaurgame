@@ -279,40 +279,81 @@ export const Stage4Game: React.FC<Stage4GameProps> = ({ onStagePass, onRestartAl
       ref={containerRef}
       onMouseMove={onMouseMove}
       onTouchMove={onTouchMove}
-      className="relative w-full h-full min-h-[580px] flex flex-col justify-between overflow-hidden bg-gradient-to-b from-[#3E2723] via-[#4E342E] to-[#2D1810] select-none cursor-crosshair touch-none"
+      className="relative w-full h-full min-h-[580px] flex flex-col justify-between overflow-hidden bg-gradient-to-b from-[#2E1A14] via-[#45281F] to-[#1E110C] select-none cursor-crosshair touch-none"
     >
       {/* Prehistoric Earthy Mud Ground Terrain (泥土地質感與恐龍足跡) */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-35">
-        <svg viewBox="0 0 800 600" preserveAspectRatio="none" className="w-full h-full">
+      <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+        <svg viewBox="0 0 1000 700" preserveAspectRatio="none" className="w-full h-full opacity-90">
           <defs>
-            <radialGradient id="mudPuddle" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="#1E140C" stopOpacity="0.8" />
-              <stop offset="80%" stopColor="#3E2723" stopOpacity="0.4" />
-              <stop offset="100%" stopColor="transparent" stopOpacity="0" />
+            <radialGradient id="mudPuddle1" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stopColor="#140B07" stopOpacity="0.9" />
+              <stop offset="70%" stopColor="#2A170E" stopOpacity="0.6" />
+              <stop offset="100%" stopColor="#45281F" stopOpacity="0" />
             </radialGradient>
+            <radialGradient id="mudPuddle2" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stopColor="#100805" stopOpacity="0.95" />
+              <stop offset="65%" stopColor="#22130C" stopOpacity="0.7" />
+              <stop offset="100%" stopColor="#45281F" stopOpacity="0" />
+            </radialGradient>
+            <linearGradient id="horizonGlow" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#7C2D12" stopOpacity="0.6" />
+              <stop offset="40%" stopColor="#451A03" stopOpacity="0.3" />
+              <stop offset="100%" stopColor="#1E110C" stopOpacity="0" />
+            </linearGradient>
+            <linearGradient id="fernBgGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+              <stop offset="0%" stopColor="#14532D" stopOpacity="0.7" />
+              <stop offset="100%" stopColor="#22C55E" stopOpacity="0.2" />
+            </linearGradient>
           </defs>
 
+          {/* Distant volcanic glow at the horizon */}
+          <rect x="0" y="0" width="1000" height="240" fill="url(#horizonGlow)" />
+
+          {/* Distant Cretaceous ridges */}
+          <path d="M 0 180 Q 250 120 500 160 T 1000 130 L 1000 280 L 0 280 Z" fill="#241209" opacity="0.8" />
+          <path d="M 0 220 Q 300 170 650 210 T 1000 180 L 1000 320 L 0 320 Z" fill="#1C0E07" opacity="0.9" />
+
           {/* Mud Puddles and Soil Depressions */}
-          <ellipse cx="220" cy="180" rx="90" ry="45" fill="url(#mudPuddle)" />
-          <ellipse cx="600" cy="380" rx="120" ry="55" fill="url(#mudPuddle)" />
-          <ellipse cx="380" cy="480" rx="80" ry="40" fill="url(#mudPuddle)" />
+          <ellipse cx="220" cy="260" rx="140" ry="70" fill="url(#mudPuddle1)" />
+          <ellipse cx="750" cy="450" rx="180" ry="85" fill="url(#mudPuddle2)" />
+          <ellipse cx="440" cy="580" rx="130" ry="60" fill="url(#mudPuddle1)" />
+          <ellipse cx="820" cy="240" rx="110" ry="50" fill="url(#mudPuddle2)" />
+          <ellipse cx="140" cy="520" rx="100" ry="50" fill="url(#mudPuddle1)" />
 
-          {/* Prehistoric Earth Ground Cracks */}
-          <path d="M 100 250 L 140 280 L 160 260 L 200 300" stroke="#1F1209" strokeWidth="2.5" fill="none" opacity="0.6" />
-          <path d="M 620 120 L 650 160 L 690 150 L 730 200" stroke="#1F1209" strokeWidth="2" fill="none" opacity="0.6" />
-          <path d="M 450 350 L 480 390 L 460 420 L 510 440" stroke="#1F1209" strokeWidth="2.2" fill="none" opacity="0.6" />
+          {/* Prehistoric Earth Ground Cracks (大地乾裂紋) */}
+          <path d="M 120 320 L 180 360 L 210 330 L 270 380 L 310 370" stroke="#0D0604" strokeWidth="3.5" fill="none" opacity="0.75" />
+          <path d="M 180 360 L 170 410 L 200 430" stroke="#0D0604" strokeWidth="2.5" fill="none" opacity="0.65" />
+          <path d="M 720 180 L 760 220 L 810 210 L 860 260" stroke="#0D0604" strokeWidth="3" fill="none" opacity="0.75" />
+          <path d="M 480 430 L 520 480 L 500 520 L 560 550" stroke="#0D0604" strokeWidth="3.2" fill="none" opacity="0.75" />
+          <path d="M 520 480 L 560 470 L 590 500" stroke="#0D0604" strokeWidth="2" fill="none" opacity="0.65" />
 
-          {/* Fossil Dinosaur Footprints in Mud */}
-          <g transform="translate(180, 420) rotate(-25) scale(0.6)" opacity="0.4" fill="#1A0F07">
-            <polygon points="20,10 25,0 30,10 26,30 20,30" />
-            <polygon points="12,14 5,8 15,22" />
-            <polygon points="38,14 45,8 35,22" />
+          {/* Large Fossil Dinosaur Footprints in Mud (深印的霸王龍巨型足印) */}
+          <g transform="translate(240, 380) rotate(-20) scale(0.95)" opacity="0.7" fill="#0A0503">
+            <polygon points="26,12 33,0 40,12 35,38 27,38" />
+            <polygon points="16,18 7,10 20,28" />
+            <polygon points="50,18 59,10 46,28" />
           </g>
-          <g transform="translate(540, 220) rotate(15) scale(0.7)" opacity="0.4" fill="#1A0F07">
-            <polygon points="20,10 25,0 30,10 26,30 20,30" />
-            <polygon points="12,14 5,8 15,22" />
-            <polygon points="38,14 45,8 35,22" />
+          <g transform="translate(680, 320) rotate(15) scale(1.1)" opacity="0.7" fill="#0A0503">
+            <polygon points="26,12 33,0 40,12 35,38 27,38" />
+            <polygon points="16,18 7,10 20,28" />
+            <polygon points="50,18 59,10 46,28" />
           </g>
+          <g transform="translate(480, 200) rotate(-10) scale(0.8)" opacity="0.6" fill="#0A0503">
+            <polygon points="26,12 33,0 40,12 35,38 27,38" />
+            <polygon points="16,18 7,10 20,28" />
+            <polygon points="50,18 59,10 46,28" />
+          </g>
+          <g transform="translate(360, 560) rotate(25) scale(1.0)" opacity="0.65" fill="#0A0503">
+            <polygon points="26,12 33,0 40,12 35,38 27,38" />
+            <polygon points="16,18 7,10 20,28" />
+            <polygon points="50,18 59,10 46,28" />
+          </g>
+
+          {/* Distant ancient giant ferns silhouette on left & right */}
+          <path d="M 0 300 Q 80 260 140 310 Q 70 320 0 350 Z" fill="url(#fernBgGrad)" />
+          <path d="M 0 340 Q 90 310 160 360 Q 80 370 0 400 Z" fill="url(#fernBgGrad)" />
+          <path d="M 1000 280 Q 920 240 860 290 Q 930 300 1000 330 Z" fill="url(#fernBgGrad)" />
+          <path d="M 1000 330 Q 910 290 840 340 Q 920 350 1000 380 Z" fill="url(#fernBgGrad)" />
         </svg>
       </div>
 

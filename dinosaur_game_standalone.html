@@ -702,6 +702,7 @@
       const [feathersCollected, setFeathersCollected] = useState(0);
       const [isGameOver, setIsGameOver] = useState(false);
       const [floatingTexts, setFloatingTexts] = useState([]);
+      const [facingLeft, setFacingLeft] = useState(false);
 
       const playerPosRef = useRef({ x: 50, y: 50 });
 
@@ -721,6 +722,7 @@
         setFeathers([]);
         setFeathersCollected(0);
         setIsGameOver(false);
+        setFacingLeft(false);
       };
 
       const handlePointerMove = (e) => {
@@ -730,6 +732,10 @@
         const clientY = e.touches ? e.touches[0].clientY : e.clientY;
         const x = Math.min(Math.max(((clientX - rect.left) / rect.width) * 100, 5), 95);
         const y = Math.min(Math.max(((clientY - rect.top) / rect.height) * 100, 5), 95);
+
+        if (x < playerPosRef.current.x - 0.2) setFacingLeft(true);
+        else if (x > playerPosRef.current.x + 0.2) setFacingLeft(false);
+
         playerPosRef.current = { x, y };
         setPlayerPos({ x, y });
       };
@@ -747,7 +753,7 @@
             return t - 1;
           });
           setTemperature((temp) => {
-            const nextTemp = temp - 3.2;
+            const nextTemp = temp - 4.5;
             if (nextTemp <= 0) {
               clearInterval(timer);
               sound.playFail();
@@ -790,8 +796,8 @@
               if (dx < 9 && dy < 9) {
                 sound.playFeatherCollect();
                 setFeathersCollected((c) => c + 1);
-                setTemperature((temp) => Math.min(temp + 14, 100));
-                addFloatingText('+14% 體溫 🔥', feather.x, feather.y);
+                setTemperature((temp) => Math.min(temp + 9, 100));
+                addFloatingText('+9% 體溫 🔥', feather.x, feather.y);
               } else if (Date.now() - feather.createdAt < 4500) {
                 remaining.push(feather);
               }
@@ -900,7 +906,7 @@
           {/* Microraptor Player */}
           <div
             className="absolute w-24 h-20 transition-transform duration-75 origin-center"
-            style={{ left: `${playerPos.x}%`, top: `${playerPos.y}%`, transform: 'translate(-50%, -50%)' }}
+            style={{ left: `${playerPos.x}%`, top: `${playerPos.y}%`, transform: `translate(-50%, -50%) scaleX(${facingLeft ? -1 : 1})` }}
           >
             <MicroraptorAvatar isGliding={true} />
           </div>
@@ -943,6 +949,8 @@
       const [preys, setPreys] = useState([]);
       const [isGameOver, setIsGameOver] = useState(false);
       const [floatingTexts, setFloatingTexts] = useState([]);
+      const [playerFacingLeft, setPlayerFacingLeft] = useState(false);
+      const [aiFacingLeft, setAiFacingLeft] = useState(true);
 
       const playerPosRef = useRef({ x: 30, y: 50 });
       const aiPosRef = useRef({ x: 70, y: 50 });
@@ -971,6 +979,8 @@
         setAiPos({ x: 70, y: 50 });
         playerPosRef.current = { x: 30, y: 50 };
         aiPosRef.current = { x: 70, y: 50 };
+        setPlayerFacingLeft(false);
+        setAiFacingLeft(true);
         setPreys([]);
         setIsGameOver(false);
       };
@@ -982,6 +992,10 @@
         const clientY = e.touches ? e.touches[0].clientY : e.clientY;
         const x = Math.min(Math.max(((clientX - rect.left) / rect.width) * 100, 5), 95);
         const y = Math.min(Math.max(((clientY - rect.top) / rect.height) * 100, 5), 95);
+
+        if (x < playerPosRef.current.x - 0.2) setPlayerFacingLeft(true);
+        else if (x > playerPosRef.current.x + 0.2) setPlayerFacingLeft(false);
+
         playerPosRef.current = { x, y };
         setPlayerPos({ x, y });
       };
@@ -1046,9 +1060,11 @@
             const dx = target.x - ai.x;
             const dy = target.y - ai.y;
             const nextAi = {
-              x: ai.x + dx * 0.065,
-              y: ai.y + dy * 0.065
+              x: ai.x + dx * 0.095,
+              y: ai.y + dy * 0.095
             };
+            if (dx < -0.1) setAiFacingLeft(true);
+            else if (dx > 0.1) setAiFacingLeft(false);
             aiPosRef.current = nextAi;
             setAiPos(nextAi);
           }
@@ -1137,15 +1153,15 @@
           {/* Player */}
           <div
             className="absolute w-24 h-20 transition-transform duration-75 origin-center"
-            style={{ left: `${playerPos.x}%`, top: `${playerPos.y}%`, transform: 'translate(-50%, -50%)' }}
+            style={{ left: `${playerPos.x}%`, top: `${playerPos.y}%`, transform: `translate(-50%, -50%) scaleX(${playerFacingLeft ? -1 : 1})` }}
           >
             {playerCharacter === 'archaeopteryx' ? <ArchaeopteryxAvatar /> : <PteranodonAvatar />}
           </div>
 
           {/* AI Rival */}
           <div
-            className="absolute w-24 h-20 opacity-80"
-            style={{ left: `${aiPos.x}%`, top: `${aiPos.y}%`, transform: 'translate(-50%, -50%) scaleX(-1)' }}
+            className="absolute w-24 h-20 opacity-80 transition-transform duration-75 origin-center"
+            style={{ left: `${aiPos.x}%`, top: `${aiPos.y}%`, transform: `translate(-50%, -50%) scaleX(${aiFacingLeft ? -1 : 1})` }}
           >
             {aiCharacter === 'archaeopteryx' ? <ArchaeopteryxAvatar /> : <PteranodonAvatar />}
           </div>
@@ -1188,6 +1204,8 @@
       const [preys, setPreys] = useState([]);
       const [isGameOver, setIsGameOver] = useState(false);
       const [floatingTexts, setFloatingTexts] = useState([]);
+      const [playerFacingLeft, setPlayerFacingLeft] = useState(false);
+      const [aiFacingLeft, setAiFacingLeft] = useState(true);
 
       const playerPosRef = useRef({ x: 30, y: 50 });
       const aiPosRef = useRef({ x: 70, y: 50 });
@@ -1216,6 +1234,8 @@
         setAiPos({ x: 70, y: 50 });
         playerPosRef.current = { x: 30, y: 50 };
         aiPosRef.current = { x: 70, y: 50 };
+        setPlayerFacingLeft(false);
+        setAiFacingLeft(true);
         setPreys([]);
         setIsGameOver(false);
       };
@@ -1227,6 +1247,10 @@
         const clientY = e.touches ? e.touches[0].clientY : e.clientY;
         const x = Math.min(Math.max(((clientX - rect.left) / rect.width) * 100, 5), 95);
         const y = Math.min(Math.max(((clientY - rect.top) / rect.height) * 100, 5), 95);
+
+        if (x < playerPosRef.current.x - 0.2) setPlayerFacingLeft(true);
+        else if (x > playerPosRef.current.x + 0.2) setPlayerFacingLeft(false);
+
         playerPosRef.current = { x, y };
         setPlayerPos({ x, y });
       };
@@ -1290,9 +1314,11 @@
             const dx = target.x - ai.x;
             const dy = target.y - ai.y;
             const nextAi = {
-              x: ai.x + dx * 0.065,
-              y: ai.y + dy * 0.065
+              x: ai.x + dx * 0.095,
+              y: ai.y + dy * 0.095
             };
+            if (dx < -0.1) setAiFacingLeft(true);
+            else if (dx > 0.1) setAiFacingLeft(false);
             aiPosRef.current = nextAi;
             setAiPos(nextAi);
           }
@@ -1388,15 +1414,15 @@
           {/* Player */}
           <div
             className="absolute w-28 h-20 transition-transform duration-75 origin-center"
-            style={{ left: `${playerPos.x}%`, top: `${playerPos.y}%`, transform: 'translate(-50%, -50%)' }}
+            style={{ left: `${playerPos.x}%`, top: `${playerPos.y}%`, transform: `translate(-50%, -50%) scaleX(${playerFacingLeft ? -1 : 1})` }}
           >
             {playerCharacter === 'elasmosaurus' ? <ElasmosaurusAvatar /> : <MosasaurusAvatar />}
           </div>
 
           {/* AI Rival */}
           <div
-            className="absolute w-28 h-20 opacity-80"
-            style={{ left: `${aiPos.x}%`, top: `${aiPos.y}%`, transform: 'translate(-50%, -50%) scaleX(-1)' }}
+            className="absolute w-28 h-20 opacity-80 transition-transform duration-75 origin-center"
+            style={{ left: `${aiPos.x}%`, top: `${aiPos.y}%`, transform: `translate(-50%, -50%) scaleX(${aiFacingLeft ? -1 : 1})` }}
           >
             {aiCharacter === 'elasmosaurus' ? <ElasmosaurusAvatar /> : <MosasaurusAvatar />}
           </div>
@@ -1592,36 +1618,71 @@
           ref={containerRef}
           onMouseMove={handlePointerMove}
           onTouchMove={handlePointerMove}
-          className="relative w-full h-full min-h-[550px] bg-gradient-to-b from-[#3E2723] via-[#4E342E] to-[#2D1810] overflow-hidden select-none cursor-crosshair"
+          className="relative w-full h-full min-h-[550px] bg-gradient-to-b from-[#2E1A14] via-[#45281F] to-[#1E110C] overflow-hidden select-none cursor-crosshair"
         >
           {/* Prehistoric Earthy Mud Ground Terrain (泥土地質感、裂痕與足跡) */}
-          <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-40">
-            <svg viewBox="0 0 800 600" preserveAspectRatio="none" className="w-full h-full">
+          <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+            <svg viewBox="0 0 1000 700" preserveAspectRatio="none" className="w-full h-full opacity-90">
               <defs>
-                <radialGradient id="s4MudPuddle" cx="50%" cy="50%" r="50%">
-                  <stop offset="0%" stopColor="#1E140C" stopOpacity="0.8" />
-                  <stop offset="80%" stopColor="#3E2723" stopOpacity="0.4" />
-                  <stop offset="100%" stopColor="transparent" stopOpacity="0" />
+                <radialGradient id="s4MudPuddle1" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stopColor="#140B07" stopOpacity="0.9" />
+                  <stop offset="70%" stopColor="#2A170E" stopOpacity="0.6" />
+                  <stop offset="100%" stopColor="#45281F" stopOpacity="0" />
                 </radialGradient>
+                <radialGradient id="s4MudPuddle2" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stopColor="#100805" stopOpacity="0.95" />
+                  <stop offset="65%" stopColor="#22130C" stopOpacity="0.7" />
+                  <stop offset="100%" stopColor="#45281F" stopOpacity="0" />
+                </radialGradient>
+                <linearGradient id="s4HorizonGlow" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#7C2D12" stopOpacity="0.6" />
+                  <stop offset="40%" stopColor="#451A03" stopOpacity="0.3" />
+                  <stop offset="100%" stopColor="#1E110C" stopOpacity="0" />
+                </linearGradient>
+                <linearGradient id="s4FernBg" x1="0%" y1="100%" x2="0%" y2="0%">
+                  <stop offset="0%" stopColor="#14532D" stopOpacity="0.7" />
+                  <stop offset="100%" stopColor="#22C55E" stopOpacity="0.2" />
+                </linearGradient>
               </defs>
-              <ellipse cx="220" cy="180" rx="90" ry="45" fill="url(#s4MudPuddle)" />
-              <ellipse cx="600" cy="380" rx="120" ry="55" fill="url(#s4MudPuddle)" />
-              <ellipse cx="380" cy="480" rx="80" ry="40" fill="url(#s4MudPuddle)" />
+
+              {/* Volcanic glow & ridges */}
+              <rect x="0" y="0" width="1000" height="240" fill="url(#s4HorizonGlow)" />
+              <path d="M 0 180 Q 250 120 500 160 T 1000 130 L 1000 280 L 0 280 Z" fill="#241209" opacity="0.8" />
+              <path d="M 0 220 Q 300 170 650 210 T 1000 180 L 1000 320 L 0 320 Z" fill="#1C0E07" opacity="0.9" />
+
+              {/* Mud Depressions */}
+              <ellipse cx="220" cy="260" rx="140" ry="70" fill="url(#s4MudPuddle1)" />
+              <ellipse cx="750" cy="450" rx="180" ry="85" fill="url(#s4MudPuddle2)" />
+              <ellipse cx="440" cy="580" rx="130" ry="60" fill="url(#s4MudPuddle1)" />
+              <ellipse cx="820" cy="240" rx="110" ry="50" fill="url(#s4MudPuddle2)" />
+              <ellipse cx="140" cy="520" rx="100" ry="50" fill="url(#s4MudPuddle1)" />
+
               {/* Soil cracks */}
-              <path d="M 100 250 L 140 280 L 160 260 L 200 300" stroke="#1F1209" strokeWidth="2.5" fill="none" opacity="0.6" />
-              <path d="M 620 120 L 650 160 L 690 150 L 730 200" stroke="#1F1209" strokeWidth="2" fill="none" opacity="0.6" />
-              <path d="M 450 350 L 480 390 L 460 420 L 510 440" stroke="#1F1209" strokeWidth="2.2" fill="none" opacity="0.6" />
+              <path d="M 120 320 L 180 360 L 210 330 L 270 380 L 310 370" stroke="#0D0604" strokeWidth="3.5" fill="none" opacity="0.75" />
+              <path d="M 180 360 L 170 410 L 200 430" stroke="#0D0604" strokeWidth="2.5" fill="none" opacity="0.65" />
+              <path d="M 720 180 L 760 220 L 810 210 L 860 260" stroke="#0D0604" strokeWidth="3" fill="none" opacity="0.75" />
+              <path d="M 480 430 L 520 480 L 500 520 L 560 550" stroke="#0D0604" strokeWidth="3.2" fill="none" opacity="0.75" />
+
               {/* Footprints in mud */}
-              <g transform="translate(180, 420) rotate(-25) scale(0.6)" opacity="0.4" fill="#1A0F07">
-                <polygon points="20,10 25,0 30,10 26,30 20,30" />
-                <polygon points="12,14 5,8 15,22" />
-                <polygon points="38,14 45,8 35,22" />
+              <g transform="translate(240, 380) rotate(-20) scale(0.95)" opacity="0.7" fill="#0A0503">
+                <polygon points="26,12 33,0 40,12 35,38 27,38" />
+                <polygon points="16,18 7,10 20,28" />
+                <polygon points="50,18 59,10 46,28" />
               </g>
-              <g transform="translate(540, 220) rotate(15) scale(0.7)" opacity="0.4" fill="#1A0F07">
-                <polygon points="20,10 25,0 30,10 26,30 20,30" />
-                <polygon points="12,14 5,8 15,22" />
-                <polygon points="38,14 45,8 35,22" />
+              <g transform="translate(680, 320) rotate(15) scale(1.1)" opacity="0.7" fill="#0A0503">
+                <polygon points="26,12 33,0 40,12 35,38 27,38" />
+                <polygon points="16,18 7,10 20,28" />
+                <polygon points="50,18 59,10 46,28" />
               </g>
+              <g transform="translate(480, 200) rotate(-10) scale(0.8)" opacity="0.6" fill="#0A0503">
+                <polygon points="26,12 33,0 40,12 35,38 27,38" />
+                <polygon points="16,18 7,10 20,28" />
+                <polygon points="50,18 59,10 46,28" />
+              </g>
+
+              {/* Ambient ancient ferns */}
+              <path d="M 0 300 Q 80 260 140 310 Q 70 320 0 350 Z" fill="url(#s4FernBg)" />
+              <path d="M 1000 280 Q 920 240 860 290 Q 930 300 1000 330 Z" fill="url(#s4FernBg)" />
             </svg>
           </div>
 
@@ -1788,11 +1849,44 @@
           )}
 
           {phase === 'FEATHER_MORPH' && (
-            <div className="text-center">
-              <span className="text-xs text-amber-300 font-mono">✨ 生命的奇蹟演化 · The Miracle of Evolution</span>
-              <div className="text-7xl my-6 animate-pulse">🪶</div>
-              <div className="bg-stone-900/90 px-4 py-1.5 rounded-full border border-amber-400 text-amber-200 text-xs font-bold">
-                一根羽毛在廢墟中央飄落，逐漸綻放出新的生命輪廓……
+            <div className="text-center flex flex-col items-center justify-center">
+              <span className="text-xs text-amber-300 font-mono tracking-widest uppercase mb-4">✨ 生命的奇蹟演化 · The Miracle of Evolution</span>
+              
+              {/* Dedicated Glowing SVG Feather */}
+              <div className="relative my-4 flex items-center justify-center animate-bounce">
+                <div className="absolute -inset-10 rounded-full bg-amber-400/20 blur-2xl animate-pulse"></div>
+                <div className="absolute -inset-4 rounded-full bg-yellow-300/30 blur-xl"></div>
+                <svg viewBox="0 0 120 160" className="w-36 h-48 filter drop-shadow-[0_0_35px_rgba(251,191,36,0.95)] overflow-visible">
+                  <defs>
+                    <linearGradient id="sFeatherGold" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#FFFBEB" />
+                      <stop offset="35%" stopColor="#FDE047" />
+                      <stop offset="70%" stopColor="#F59E0B" />
+                      <stop offset="100%" stopColor="#D97706" />
+                    </linearGradient>
+                    <linearGradient id="sQuill" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stopColor="#FFFFFF" />
+                      <stop offset="60%" stopColor="#FDE68A" />
+                      <stop offset="100%" stopColor="#B45309" />
+                    </linearGradient>
+                  </defs>
+                  {/* Left Vane */}
+                  <path d="M 60 20 Q 30 45 22 75 Q 18 105 32 125 Q 46 115 60 110 Z" fill="url(#sFeatherGold)" stroke="#FDE68A" strokeWidth="1.2" />
+                  <path d="M 60 35 Q 40 50 30 65" stroke="#FEF3C7" strokeWidth="1.2" fill="none" opacity="0.8" />
+                  <path d="M 60 55 Q 35 70 25 90" stroke="#FEF3C7" strokeWidth="1.2" fill="none" opacity="0.8" />
+                  <path d="M 60 75 Q 35 90 28 110" stroke="#FEF3C7" strokeWidth="1.2" fill="none" opacity="0.8" />
+                  {/* Right Vane */}
+                  <path d="M 60 20 Q 90 40 98 70 Q 104 100 88 120 Q 75 112 60 110 Z" fill="url(#sFeatherGold)" stroke="#FDE68A" strokeWidth="1.2" />
+                  <path d="M 60 35 Q 80 48 90 62" stroke="#FEF3C7" strokeWidth="1.2" fill="none" opacity="0.8" />
+                  <path d="M 60 55 Q 85 68 95 85" stroke="#FEF3C7" strokeWidth="1.2" fill="none" opacity="0.8" />
+                  <path d="M 60 75 Q 85 88 92 105" stroke="#FEF3C7" strokeWidth="1.2" fill="none" opacity="0.8" />
+                  {/* Shaft */}
+                  <path d="M 60 18 Q 59 70 58 120 L 56 150 L 60 150 L 62 120 Q 61 70 60 18 Z" fill="url(#sQuill)" stroke="#F59E0B" strokeWidth="1.5" />
+                </svg>
+              </div>
+
+              <div className="bg-stone-900/90 px-5 py-2 rounded-full border border-amber-400 text-amber-200 text-xs font-bold shadow-[0_0_20px_rgba(245,158,11,0.4)]">
+                🪶 一根羽毛在廢墟中央飄落，逐漸綻放出新的生命輪廓……
               </div>
             </div>
           )}

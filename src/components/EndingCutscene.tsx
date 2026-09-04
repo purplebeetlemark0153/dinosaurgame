@@ -201,22 +201,92 @@ export const EndingCutscene: React.FC<EndingCutsceneProps> = ({
 
             {/* Glowing Feather transitioning to Bird */}
             <motion.div
-              initial={{ y: -80, opacity: 0, rotate: -20 }}
+              initial={{ y: -60, opacity: 0, rotate: -25 }}
               animate={{ y: 0, opacity: 1, rotate: 0 }}
-              transition={{ duration: 2.2, ease: 'easeOut' }}
-              className="relative flex flex-col items-center justify-center my-6"
+              transition={{ duration: 2.0, ease: 'easeOut' }}
+              className="relative flex flex-col items-center justify-center my-6 z-40"
             >
-              {/* Radiant Feather */}
+              {/* Radiant Dedicated Feather (Glowing SVG Feather) */}
               <motion.div
-                animate={{ scale: [1, 1.2, 1], opacity: [0.8, 1, 0.9] }}
-                transition={{ duration: 2, repeat: Infinity }}
-                className="relative"
+                animate={{ scale: [1, 1.15, 1], rotate: [0, 3, -3, 0] }}
+                transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
+                className="relative flex items-center justify-center"
               >
-                <Feather className="w-24 h-24 sm:w-32 sm:h-32 text-amber-300 drop-shadow-[0_0_30px_rgba(251,191,36,0.9)] animate-pulse" />
+                {/* Radiant Halo & Starlight Aura */}
+                <div className="absolute -inset-10 rounded-full bg-amber-400/20 blur-2xl animate-pulse" />
+                <div className="absolute -inset-4 rounded-full bg-yellow-300/30 blur-xl" />
+
+                {/* Highly Detailed Glowing Evolution Feather SVG */}
+                <svg
+                  viewBox="0 0 120 160"
+                  className="w-32 h-40 sm:w-44 sm:h-56 filter drop-shadow-[0_0_35px_rgba(251,191,36,0.95)] overflow-visible"
+                >
+                  <defs>
+                    <linearGradient id="featherGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#FFFBEB" />
+                      <stop offset="35%" stopColor="#FDE047" />
+                      <stop offset="70%" stopColor="#F59E0B" />
+                      <stop offset="100%" stopColor="#D97706" />
+                    </linearGradient>
+                    <linearGradient id="quillGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stopColor="#FFFFFF" />
+                      <stop offset="60%" stopColor="#FDE68A" />
+                      <stop offset="100%" stopColor="#B45309" />
+                    </linearGradient>
+                    <radialGradient id="featherCoreGlow" cx="50%" cy="50%" r="50%">
+                      <stop offset="0%" stopColor="#FEF08A" stopOpacity="0.8" />
+                      <stop offset="60%" stopColor="#F59E0B" stopOpacity="0.3" />
+                      <stop offset="100%" stopColor="transparent" stopOpacity="0" />
+                    </radialGradient>
+                  </defs>
+
+                  {/* Core Ambient Glow */}
+                  <ellipse cx="60" cy="80" rx="45" ry="60" fill="url(#featherCoreGlow)" />
+
+                  {/* Left Vane Barbs */}
+                  <path
+                    d="M 60 20 Q 30 45 22 75 Q 18 105 32 125 Q 46 115 60 110 Z"
+                    fill="url(#featherGoldGrad)"
+                    stroke="#FDE68A"
+                    strokeWidth="1.2"
+                  />
+                  {/* Left Barb Textures */}
+                  <path d="M 60 35 Q 40 50 30 65" stroke="#FEF3C7" strokeWidth="1.2" fill="none" opacity="0.8" />
+                  <path d="M 60 55 Q 35 70 25 90" stroke="#FEF3C7" strokeWidth="1.2" fill="none" opacity="0.8" />
+                  <path d="M 60 75 Q 35 90 28 110" stroke="#FEF3C7" strokeWidth="1.2" fill="none" opacity="0.8" />
+                  <path d="M 60 95 Q 42 105 35 120" stroke="#FEF3C7" strokeWidth="1.2" fill="none" opacity="0.8" />
+
+                  {/* Right Vane Barbs */}
+                  <path
+                    d="M 60 20 Q 90 40 98 70 Q 104 100 88 120 Q 75 112 60 110 Z"
+                    fill="url(#featherGoldGrad)"
+                    stroke="#FDE68A"
+                    strokeWidth="1.2"
+                  />
+                  {/* Right Barb Textures */}
+                  <path d="M 60 35 Q 80 48 90 62" stroke="#FEF3C7" strokeWidth="1.2" fill="none" opacity="0.8" />
+                  <path d="M 60 55 Q 85 68 95 85" stroke="#FEF3C7" strokeWidth="1.2" fill="none" opacity="0.8" />
+                  <path d="M 60 75 Q 85 88 92 105" stroke="#FEF3C7" strokeWidth="1.2" fill="none" opacity="0.8" />
+                  <path d="M 60 95 Q 78 102 85 115" stroke="#FEF3C7" strokeWidth="1.2" fill="none" opacity="0.8" />
+
+                  {/* Central Shaft / Rachis & Calamus */}
+                  <path
+                    d="M 60 18 Q 59 70 58 120 L 56 150 L 60 150 L 62 120 Q 61 70 60 18 Z"
+                    fill="url(#quillGrad)"
+                    stroke="#F59E0B"
+                    strokeWidth="1.5"
+                  />
+
+                  {/* Floating Micro Shimmer Sparkles around Feather */}
+                  <circle cx="20" cy="40" r="2.5" fill="#FFF" className="animate-ping" />
+                  <circle cx="102" cy="50" r="2" fill="#FDE047" className="animate-pulse" />
+                  <circle cx="15" cy="110" r="2" fill="#FDE047" className="animate-pulse" />
+                  <circle cx="105" cy="115" r="2.5" fill="#FFF" className="animate-ping" />
+                </svg>
               </motion.div>
 
-              <div className="mt-4 text-center text-amber-200 font-bold text-sm tracking-wide bg-stone-900/80 px-4 py-1.5 rounded-full border border-amber-400/40">
-                一根羽毛在廢墟中央飄落，逐漸綻放出新的生命輪廓……
+              <div className="mt-4 text-center text-amber-200 font-bold text-sm tracking-wide bg-stone-900/90 px-5 py-2 rounded-full border border-amber-400/60 shadow-[0_0_20px_rgba(245,158,11,0.4)]">
+                🪶 一根羽毛在廢墟中央飄落，逐漸綻放出新的生命輪廓……
               </div>
             </motion.div>
           </motion.div>

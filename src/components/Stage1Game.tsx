@@ -72,12 +72,11 @@ export const Stage1Game: React.FC<Stage1GameProps> = ({ onStagePass, onRestartAl
     const x = Math.min(Math.max(((clientX - rect.left) / rect.width) * 100, 5), 95);
     const y = Math.min(Math.max(((clientY - rect.top) / rect.height) * 100, 5), 95);
 
+    if (x < playerPosRef.current.x - 0.2) setFacingLeft(true);
+    else if (x > playerPosRef.current.x + 0.2) setFacingLeft(false);
+
     playerPosRef.current = { x, y };
-    setPlayerPos((prev) => {
-      if (x < prev.x) setFacingLeft(true);
-      else if (x > prev.x) setFacingLeft(false);
-      return { x, y };
-    });
+    setPlayerPos({ x, y });
     setGliding(true);
   };
 
@@ -110,7 +109,7 @@ export const Stage1Game: React.FC<Stage1GameProps> = ({ onStagePass, onRestartAl
         x: Math.floor(Math.random() * 82) + 9,
         y: Math.floor(Math.random() * 70) + 16,
         type: isGolden ? 'golden' : 'warm',
-        value: isGolden ? 11 : 6,
+        value: isGolden ? 7 : 4,
         opacity: 1,
         lifetime: isGolden ? 2200 : 1800,
         createdAt: Date.now(),
@@ -146,9 +145,9 @@ export const Stage1Game: React.FC<Stage1GameProps> = ({ onStagePass, onRestartAl
       // 2. Clean expired feathers
       setFeathers((prev) => prev.filter((f) => now - f.createdAt < f.lifetime));
 
-      // 3. Moderate Temperature / Stamina Consumption (~11.6% per second; 0.58 per 50ms)
+      // 3. Higher Temperature / Stamina Consumption (~15.6% per second; 0.78 per 50ms)
       setTemperature((prevTemp) => {
-        const dropRate = 0.58;
+        const dropRate = 0.78;
         const newTemp = prevTemp - dropRate;
         if (newTemp <= 0) {
           // Freeze death failure before 30 seconds

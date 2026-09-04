@@ -239,7 +239,7 @@ export const Stage2Game: React.FC<Stage2GameProps> = ({ playerCharacter, onStage
 
         if (closestPrey) {
           const target = closestPrey as SkyPrey;
-          const speed = 1.1; // AI speed
+          const speed = 1.45; // Enhanced AI competitor speed
           const dx = target.x - currentAi.x;
           const dy = target.y - currentAi.y;
           const angle = Math.atan2(dy, dx);
@@ -395,6 +395,7 @@ export const Stage2Game: React.FC<Stage2GameProps> = ({ playerCharacter, onStage
             style={{
               left: `${prey.x}%`,
               top: `${prey.y}%`,
+              transform: `translate(-50%, -50%) ${prey.vx < 0 ? 'scaleX(-1)' : 'scaleX(1)'}`,
             }}
           >
             <div className="relative bg-white/30 backdrop-blur-md border-2 border-white/60 p-2 rounded-full shadow-[0_0_15px_rgba(255,255,255,0.6)] flex items-center justify-center animate-pulse">
