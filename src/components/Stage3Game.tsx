@@ -166,7 +166,7 @@ export const Stage3Game: React.FC<Stage3GameProps> = ({ playerCharacter, onStage
       setTimeLeft((t) => {
         if (t <= 1) {
           clearInterval(gameTimer);
-          if (scoresRef.current.player > scoresRef.current.ai) {
+          if (scoresRef.current.player >= scoresRef.current.ai) {
             sound.playWin();
             onStagePass();
           } else {

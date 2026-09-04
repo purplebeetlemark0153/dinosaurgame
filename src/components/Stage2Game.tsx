@@ -186,7 +186,7 @@ export const Stage2Game: React.FC<Stage2GameProps> = ({ playerCharacter, onStage
         if (t <= 1) {
           clearInterval(gameTimer);
           // Check winner using current scoresRef
-          if (scoresRef.current.player > scoresRef.current.ai) {
+          if (scoresRef.current.player >= scoresRef.current.ai) {
             sound.playWin();
             onStagePass();
           } else {

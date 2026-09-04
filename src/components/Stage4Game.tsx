@@ -101,14 +101,16 @@ export const Stage4Game: React.FC<Stage4GameProps> = ({ onStagePass, onRestartAl
       // Increment count exactly once
       setCaughtCount((c) => {
         const newCount = c + 1;
+        caughtCountRef.current = newCount;
         addFloatingText(`捕獲美頜龍! (${newCount}/20)`, targetCompy.x, targetCompy.y);
-        if (newCount === 20) {
+        if (newCount >= 20) {
           sound.playWin();
+          onStagePass();
         }
         return newCount;
       });
     }
-  }, []);
+  }, [onStagePass]);
 
   const resetGame = useCallback(() => {
     setPlayerPos({ x: 50, y: 50 });
@@ -226,7 +228,7 @@ export const Stage4Game: React.FC<Stage4GameProps> = ({ onStagePass, onRestartAl
       };
 
       setCompys((prev) => [...prev, newCompy]);
-    }, 1200); // Lower spawn frequency
+    }, 850); // Balanced spawn frequency so catching 20 is achievable in 30s
 
     return () => clearInterval(spawnInterval);
   }, [isGameOver, scenery]);

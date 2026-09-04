@@ -949,6 +949,9 @@
       const preysRef = useRef([]);
       preysRef.current = preys;
 
+      const scoresRef = useRef({ player: 0, ai: 0 });
+      scoresRef.current = { player: playerScore, ai: aiScore };
+
       const aiCharacter = playerCharacter === 'archaeopteryx' ? 'pteranodon' : 'archaeopteryx';
 
       const addFloatingText = (text, x, y) => {
@@ -963,6 +966,7 @@
         setTimeLeft(30);
         setPlayerScore(0);
         setAiScore(0);
+        scoresRef.current = { player: 0, ai: 0 };
         setPlayerPos({ x: 30, y: 50 });
         setAiPos({ x: 70, y: 50 });
         playerPosRef.current = { x: 30, y: 50 };
@@ -982,13 +986,14 @@
         setPlayerPos({ x, y });
       };
 
+      // Game Timer (Clean 1s tick, decoupled from score updates so countdown never resets!)
       useEffect(() => {
         if (isGameOver) return;
         const timer = setInterval(() => {
           setTimeLeft((t) => {
             if (t <= 1) {
               clearInterval(timer);
-              if (playerScore >= aiScore) {
+              if (scoresRef.current.player >= scoresRef.current.ai) {
                 sound.playWin();
                 onStagePass();
               } else {
@@ -1001,7 +1006,7 @@
           });
         }, 1000);
         return () => clearInterval(timer);
-      }, [isGameOver, playerScore, aiScore, onStagePass]);
+      }, [isGameOver, onStagePass]);
 
       useEffect(() => {
         if (isGameOver) return;
@@ -1189,6 +1194,9 @@
       const preysRef = useRef([]);
       preysRef.current = preys;
 
+      const scoresRef = useRef({ player: 0, ai: 0 });
+      scoresRef.current = { player: playerScore, ai: aiScore };
+
       const aiCharacter = playerCharacter === 'elasmosaurus' ? 'mosasaurus' : 'elasmosaurus';
 
       const addFloatingText = (text, x, y) => {
@@ -1203,6 +1211,7 @@
         setTimeLeft(30);
         setPlayerScore(0);
         setAiScore(0);
+        scoresRef.current = { player: 0, ai: 0 };
         setPlayerPos({ x: 30, y: 50 });
         setAiPos({ x: 70, y: 50 });
         playerPosRef.current = { x: 30, y: 50 };
@@ -1222,13 +1231,14 @@
         setPlayerPos({ x, y });
       };
 
+      // Game Timer (Clean 1s tick, decoupled from score updates so countdown never resets!)
       useEffect(() => {
         if (isGameOver) return;
         const timer = setInterval(() => {
           setTimeLeft((t) => {
             if (t <= 1) {
               clearInterval(timer);
-              if (playerScore >= aiScore) {
+              if (scoresRef.current.player >= scoresRef.current.ai) {
                 sound.playWin();
                 onStagePass();
               } else {
@@ -1241,7 +1251,7 @@
           });
         }, 1000);
         return () => clearInterval(timer);
-      }, [isGameOver, playerScore, aiScore, onStagePass]);
+      }, [isGameOver, onStagePass]);
 
       useEffect(() => {
         if (isGameOver) return;
@@ -1467,14 +1477,16 @@
 
           setCaughtCount((c) => {
             const newCount = c + 1;
+            caughtCountRef.current = newCount;
             addFloatingText(`捕獲美頜龍! (${newCount}/20)`, targetCompy.x, targetCompy.y);
-            if (newCount === 20) {
+            if (newCount >= 20) {
               sound.playWin();
+              onStagePass();
             }
             return newCount;
           });
         }
-      }, []);
+      }, [onStagePass]);
 
       const resetGame = () => {
         setPlayerPos({ x: 50, y: 50 });
@@ -1525,21 +1537,21 @@
         return () => clearInterval(moveLoop);
       }, [isGameOver, attemptCatch]);
 
-      // Spawn Compsognathus interval 1200ms
+      // Spawn Compsognathus interval 850ms (generous chance to reach 20 in 30s)
       useEffect(() => {
         if (isGameOver) return;
         const spawner = setInterval(() => {
-          if (compysRef.current.length >= 4) return;
+          if (compysRef.current.length >= 5) return;
           const newCompy = {
             id: Date.now() + Math.random(),
             x: Math.random() * 80 + 10,
             y: Math.random() * 75 + 12,
             spawnTime: Date.now(),
-            duration: Math.floor(Math.random() * 800) + 2100,
+            duration: Math.floor(Math.random() * 800) + 2400,
             facingLeft: Math.random() > 0.5
           };
           setCompys((prev) => [...prev, newCompy]);
-        }, 1200);
+        }, 850);
         return () => clearInterval(spawner);
       }, [isGameOver]);
 
