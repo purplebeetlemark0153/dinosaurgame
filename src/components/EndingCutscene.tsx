@@ -216,72 +216,167 @@ export const EndingCutscene: React.FC<EndingCutsceneProps> = ({
                 <div className="absolute -inset-10 rounded-full bg-amber-400/20 blur-2xl animate-pulse" />
                 <div className="absolute -inset-4 rounded-full bg-yellow-300/30 blur-xl" />
 
-                {/* Highly Detailed Glowing Evolution Feather SVG */}
+                {/* Highly Detailed Authentic Glowing Avian Evolution Feather SVG */}
                 <svg
-                  viewBox="0 0 120 160"
-                  className="w-32 h-40 sm:w-44 sm:h-56 filter drop-shadow-[0_0_35px_rgba(251,191,36,0.95)] overflow-visible"
+                  viewBox="0 0 130 165"
+                  className="w-36 h-48 sm:w-48 sm:h-64 filter drop-shadow-[0_0_35px_rgba(251,191,36,0.95)] overflow-visible"
                 >
                   <defs>
-                    <linearGradient id="featherGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="#FFFBEB" />
-                      <stop offset="35%" stopColor="#FDE047" />
-                      <stop offset="70%" stopColor="#F59E0B" />
-                      <stop offset="100%" stopColor="#D97706" />
+                    <linearGradient id="featherVaneGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#FFFDF5" />
+                      <stop offset="25%" stopColor="#FEF08A" />
+                      <stop offset="55%" stopColor="#FBBF24" />
+                      <stop offset="85%" stopColor="#D97706" />
+                      <stop offset="100%" stopColor="#92400E" />
                     </linearGradient>
-                    <linearGradient id="quillGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <linearGradient id="featherShaftGrad" x1="0%" y1="0%" x2="0%" y2="100%">
                       <stop offset="0%" stopColor="#FFFFFF" />
-                      <stop offset="60%" stopColor="#FDE68A" />
-                      <stop offset="100%" stopColor="#B45309" />
+                      <stop offset="45%" stopColor="#FEF3C7" />
+                      <stop offset="80%" stopColor="#FDE68A" />
+                      <stop offset="100%" stopColor="#CA8A04" />
                     </linearGradient>
-                    <radialGradient id="featherCoreGlow" cx="50%" cy="50%" r="50%">
-                      <stop offset="0%" stopColor="#FEF08A" stopOpacity="0.8" />
-                      <stop offset="60%" stopColor="#F59E0B" stopOpacity="0.3" />
+                    <linearGradient id="calamusGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stopColor="#FEF9C3" stopOpacity="0.95" />
+                      <stop offset="60%" stopColor="#FDE047" stopOpacity="0.8" />
+                      <stop offset="100%" stopColor="#CA8A04" stopOpacity="0.5" />
+                    </linearGradient>
+                    <radialGradient id="featherAmbientGlow" cx="50%" cy="50%" r="50%">
+                      <stop offset="0%" stopColor="#FEF08A" stopOpacity="0.85" />
+                      <stop offset="50%" stopColor="#F59E0B" stopOpacity="0.35" />
                       <stop offset="100%" stopColor="transparent" stopOpacity="0" />
                     </radialGradient>
                   </defs>
 
-                  {/* Core Ambient Glow */}
-                  <ellipse cx="60" cy="80" rx="45" ry="60" fill="url(#featherCoreGlow)" />
+                  {/* Core Ambient Radiance */}
+                  <ellipse cx="62" cy="78" rx="55" ry="68" fill="url(#featherAmbientGlow)" />
 
-                  {/* Left Vane Barbs */}
+                  {/* Basal Down Feather Filaments (羽毛基部膨鬆柔軟的下羽絨絲 - 絕非樹葉特徵) */}
+                  <g opacity="0.9">
+                    {/* Left Down Barbs */}
+                    <path d="M 50 134 C 38 136, 26 142, 16 150" stroke="#FFFBEB" strokeWidth="1.2" fill="none" strokeLinecap="round" />
+                    <path d="M 50 130 C 34 130, 20 136, 12 144" stroke="#FEF08A" strokeWidth="1.1" fill="none" strokeLinecap="round" />
+                    <path d="M 49 125 C 32 122, 18 127, 14 135" stroke="#FDE68A" strokeWidth="1.1" fill="none" strokeLinecap="round" />
+                    <path d="M 48 120 C 34 116, 22 118, 16 124" stroke="#FBBF24" strokeWidth="1.0" fill="none" strokeLinecap="round" />
+                    <path d="M 49 128 C 38 131, 28 138, 22 147" stroke="#FEF9C3" strokeWidth="0.9" fill="none" strokeLinecap="round" />
+
+                    {/* Right Down Barbs */}
+                    <path d="M 53 134 C 66 137, 80 142, 92 150" stroke="#FFFBEB" strokeWidth="1.2" fill="none" strokeLinecap="round" />
+                    <path d="M 53 129 C 70 130, 86 136, 96 144" stroke="#FEF08A" strokeWidth="1.1" fill="none" strokeLinecap="round" />
+                    <path d="M 52 124 C 72 123, 88 127, 98 135" stroke="#FDE68A" strokeWidth="1.1" fill="none" strokeLinecap="round" />
+                    <path d="M 51 119 C 68 116, 82 118, 90 124" stroke="#FBBF24" strokeWidth="1.0" fill="none" strokeLinecap="round" />
+                    <path d="M 52 128 C 66 131, 78 138, 86 147" stroke="#FEF9C3" strokeWidth="0.9" fill="none" strokeLinecap="round" />
+                  </g>
+
+                  {/* Left Vane (Outer / Leading Edge: Narrower aerodynamic flight vane with distinct natural feather splits) */}
                   <path
-                    d="M 60 20 Q 30 45 22 75 Q 18 105 32 125 Q 46 115 60 110 Z"
-                    fill="url(#featherGoldGrad)"
-                    stroke="#FDE68A"
+                    d="M 76 12
+                       C 70 20, 62 27, 54 36
+                       C 52 33, 53 40, 47 50
+                       C 44 47, 46 55, 41 68
+                       C 38 65, 40 74, 37 86
+                       C 34 83, 36 94, 35 106
+                       C 34 112, 40 117, 49 120
+                       L 50 122 Z"
+                    fill="url(#featherVaneGrad)"
+                    stroke="#FEF08A"
+                    strokeWidth="1.0"
+                  />
+
+                  {/* Right Vane (Inner / Trailing Edge: Broader, graceful aerodynamic vane with feathery contour notches) */}
+                  <path
+                    d="M 76 12
+                       C 86 21, 98 33, 106 46
+                       C 101 44, 106 54, 112 66
+                       C 107 64, 111 75, 115 88
+                       C 110 86, 112 98, 107 108
+                       C 98 117, 85 121, 68 121
+                       C 58 120, 52 120, 52 120 Z"
+                    fill="url(#featherVaneGrad)"
+                    stroke="#FEF08A"
+                    strokeWidth="1.0"
+                  />
+
+                  {/* Natural Feather Barb Fissures / Splits (羽裂羽隙陰影) */}
+                  <path d="M 54 36 L 62 30" stroke="#78350F" strokeWidth="1.2" opacity="0.65" />
+                  <path d="M 47 50 L 56 42" stroke="#78350F" strokeWidth="1.2" opacity="0.65" />
+                  <path d="M 41 68 L 51 58" stroke="#78350F" strokeWidth="1.2" opacity="0.65" />
+                  <path d="M 37 86 L 48 76" stroke="#78350F" strokeWidth="1.2" opacity="0.65" />
+
+                  <path d="M 106 46 L 90 38" stroke="#78350F" strokeWidth="1.3" opacity="0.65" />
+                  <path d="M 112 66 L 94 56" stroke="#78350F" strokeWidth="1.3" opacity="0.65" />
+                  <path d="M 115 88 L 95 76" stroke="#78350F" strokeWidth="1.3" opacity="0.65" />
+                  <path d="M 107 108 L 88 98" stroke="#78350F" strokeWidth="1.3" opacity="0.65" />
+
+                  {/* Fine Barbule Micro-Striations (密集的斜向微細羽枝條紋) */}
+                  <g stroke="#FFFBEB" strokeWidth="0.8" opacity="0.75" fill="none">
+                    {/* Left Vane Barbules */}
+                    <path d="M 72 18 C 66 23, 60 28, 55 34" />
+                    <path d="M 66 26 C 58 32, 52 38, 48 45" />
+                    <path d="M 60 36 C 52 44, 46 52, 43 60" />
+                    <path d="M 55 48 C 48 58, 43 68, 40 76" />
+                    <path d="M 51 62 C 45 74, 40 84, 38 94" />
+                    <path d="M 49 78 C 44 88, 40 98, 37 106" />
+                    <path d="M 48 94 C 44 102, 41 110, 42 116" />
+
+                    {/* Right Vane Barbules */}
+                    <path d="M 74 18 C 82 24, 90 31, 98 38" />
+                    <path d="M 70 28 C 80 36, 92 46, 102 54" />
+                    <path d="M 64 38 C 76 48, 90 60, 104 70" />
+                    <path d="M 59 50 C 73 62, 88 76, 106 86" />
+                    <path d="M 55 64 C 70 78, 86 92, 106 102" />
+                    <path d="M 52 80 C 66 94, 82 106, 98 114" />
+                    <path d="M 51 96 C 64 106, 78 114, 88 119" />
+                    <path d="M 51 108 C 60 114, 70 118, 78 120" />
+                  </g>
+
+                  {/* Feathery Edge Wisps (羽毛外緣微細突出的羽絲針尖) */}
+                  <g stroke="#FEF08A" strokeWidth="0.9" opacity="0.9" fill="none">
+                    <path d="M 54 36 L 52 38" />
+                    <path d="M 47 50 L 44 53" />
+                    <path d="M 41 68 L 38 71" />
+                    <path d="M 37 86 L 34 89" />
+                    <path d="M 106 46 L 109 48" />
+                    <path d="M 112 66 L 115 69" />
+                    <path d="M 115 88 L 118 91" />
+                  </g>
+
+                  {/* Translucent Calamus / Quill Barrel (羽軸筆管 / 翮 - 中空半透明羽毛根部) */}
+                  <path
+                    d="M 53 134 C 54 142, 55 152, 54 160 C 52 160, 50 156, 49 148 C 48 142, 49 135, 51 134 Z"
+                    fill="url(#calamusGrad)"
+                    stroke="#D97706"
                     strokeWidth="1.2"
                   />
-                  {/* Left Barb Textures */}
-                  <path d="M 60 35 Q 40 50 30 65" stroke="#FEF3C7" strokeWidth="1.2" fill="none" opacity="0.8" />
-                  <path d="M 60 55 Q 35 70 25 90" stroke="#FEF3C7" strokeWidth="1.2" fill="none" opacity="0.8" />
-                  <path d="M 60 75 Q 35 90 28 110" stroke="#FEF3C7" strokeWidth="1.2" fill="none" opacity="0.8" />
-                  <path d="M 60 95 Q 42 105 35 120" stroke="#FEF3C7" strokeWidth="1.2" fill="none" opacity="0.8" />
+                  <path d="M 52 136 L 52 156" stroke="#FFFFFF" strokeWidth="0.8" opacity="0.8" />
 
-                  {/* Right Vane Barbs */}
+                  {/* Central Curved Rachis / Feather Shaft (曲線優雅的羽軸) */}
                   <path
-                    d="M 60 20 Q 90 40 98 70 Q 104 100 88 120 Q 75 112 60 110 Z"
-                    fill="url(#featherGoldGrad)"
-                    stroke="#FDE68A"
-                    strokeWidth="1.2"
+                    d="M 50 134
+                       C 47 105, 48 70, 60 40
+                       C 65 28, 70 18, 76 12
+                       C 75 14, 70 24, 63 38
+                       C 51 68, 50 102, 53 134 Z"
+                    fill="url(#featherShaftGrad)"
+                    stroke="#B45309"
+                    strokeWidth="1.4"
                   />
-                  {/* Right Barb Textures */}
-                  <path d="M 60 35 Q 80 48 90 62" stroke="#FEF3C7" strokeWidth="1.2" fill="none" opacity="0.8" />
-                  <path d="M 60 55 Q 85 68 95 85" stroke="#FEF3C7" strokeWidth="1.2" fill="none" opacity="0.8" />
-                  <path d="M 60 75 Q 85 88 92 105" stroke="#FEF3C7" strokeWidth="1.2" fill="none" opacity="0.8" />
-                  <path d="M 60 95 Q 78 102 85 115" stroke="#FEF3C7" strokeWidth="1.2" fill="none" opacity="0.8" />
 
-                  {/* Central Shaft / Rachis & Calamus */}
+                  {/* Specular Highlight along Central Rachis */}
                   <path
-                    d="M 60 18 Q 59 70 58 120 L 56 150 L 60 150 L 62 120 Q 61 70 60 18 Z"
-                    fill="url(#quillGrad)"
-                    stroke="#F59E0B"
-                    strokeWidth="1.5"
+                    d="M 51 130 C 49 104, 50 72, 61 42 C 65 30, 71 20, 75 14"
+                    stroke="#FFFFFF"
+                    strokeWidth="1.1"
+                    strokeLinecap="round"
+                    fill="none"
+                    opacity="0.95"
                   />
 
                   {/* Floating Micro Shimmer Sparkles around Feather */}
                   <circle cx="20" cy="40" r="2.5" fill="#FFF" className="animate-ping" />
-                  <circle cx="102" cy="50" r="2" fill="#FDE047" className="animate-pulse" />
+                  <circle cx="112" cy="50" r="2" fill="#FDE047" className="animate-pulse" />
                   <circle cx="15" cy="110" r="2" fill="#FDE047" className="animate-pulse" />
-                  <circle cx="105" cy="115" r="2.5" fill="#FFF" className="animate-ping" />
+                  <circle cx="115" cy="115" r="2.5" fill="#FFF" className="animate-ping" />
+                  <circle cx="76" cy="10" r="2.5" fill="#FFF" className="animate-ping" />
                 </svg>
               </motion.div>
 

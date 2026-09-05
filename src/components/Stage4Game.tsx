@@ -31,7 +31,7 @@ interface BushOrRock {
 export const Stage4Game: React.FC<Stage4GameProps> = ({ onStagePass, onRestartAll, onHome }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Scenery items (雜草叢與石堆)
+  // Scenery items (蕨類植物草叢與石堆)
   const [scenery] = useState<BushOrRock[]>([
     { id: 1, x: 18, y: 30, type: 'bush', size: 28 },
     { id: 2, x: 80, y: 25, type: 'rock', size: 30 },
@@ -40,6 +40,9 @@ export const Stage4Game: React.FC<Stage4GameProps> = ({ onStagePass, onRestartAl
     { id: 5, x: 50, y: 45, type: 'bush', size: 26 },
     { id: 6, x: 10, y: 80, type: 'bush', size: 24 },
     { id: 7, x: 90, y: 50, type: 'rock', size: 28 },
+    { id: 8, x: 38, y: 84, type: 'bush', size: 28 },
+    { id: 9, x: 88, y: 72, type: 'bush', size: 30 },
+    { id: 10, x: 62, y: 35, type: 'bush', size: 26 },
   ]);
 
   // Player state
@@ -304,6 +307,41 @@ export const Stage4Game: React.FC<Stage4GameProps> = ({ onStagePass, onRestartAl
               <stop offset="0%" stopColor="#14532D" stopOpacity="0.7" />
               <stop offset="100%" stopColor="#22C55E" stopOpacity="0.2" />
             </linearGradient>
+
+            {/* Reusable Cretaceous Fern Bush (白堊紀羊齒蕨類植物草叢) */}
+            <g id="prehistoricFernClump">
+              {/* Shadow at base */}
+              <ellipse cx="60" cy="88" rx="45" ry="12" fill="#0D0604" opacity="0.6" />
+
+              {/* Low spreading fern fronds */}
+              <path d="M 60 86 Q 30 76 6 72 Q 28 82 60 86 Z" fill="#14532D" />
+              <path d="M 60 86 Q 90 76 114 72 Q 92 82 60 86 Z" fill="#14532D" />
+
+              {/* Left Arching Fern Frond with pinnate leaflets */}
+              <path d="M 60 86 Q 32 60 12 32 Q 26 44 42 62 Q 52 76 60 86 Z" fill="#166534" />
+              <path d="M 24 46 Q 10 40 4 34 Q 18 43 30 52 Z" fill="#22C55E" />
+              <path d="M 34 56 Q 20 52 12 46 Q 26 55 38 62 Z" fill="#4ADE80" />
+              <path d="M 44 68 Q 30 66 22 60 Q 36 68 48 74 Z" fill="#15803D" />
+
+              {/* Center Tall Arching Fern Frond */}
+              <path d="M 60 86 Q 60 40 48 6 Q 68 32 68 62 Q 65 78 60 86 Z" fill="#15803D" />
+              <path d="M 52 24 Q 38 18 30 14 Q 44 22 54 28 Z" fill="#4ADE80" />
+              <path d="M 64 26 Q 78 20 86 16 Q 72 24 62 32 Z" fill="#22C55E" />
+              <path d="M 54 42 Q 38 36 28 32 Q 44 40 56 46 Z" fill="#166534" />
+              <path d="M 66 45 Q 82 40 92 36 Q 76 44 64 52 Z" fill="#22C55E" />
+              <path d="M 56 60 Q 40 56 32 52 Q 46 60 58 66 Z" fill="#14532D" />
+              <path d="M 66 62 Q 80 58 90 54 Q 76 62 66 70 Z" fill="#15803D" />
+
+              {/* Right Arching Fern Frond with pinnules */}
+              <path d="M 60 86 Q 88 60 108 32 Q 94 44 78 62 Q 68 76 60 86 Z" fill="#166534" />
+              <path d="M 96 46 Q 110 40 116 34 Q 102 43 90 52 Z" fill="#22C55E" />
+              <path d="M 86 56 Q 100 52 108 46 Q 94 55 82 62 Z" fill="#4ADE80" />
+              <path d="M 76 68 Q 90 66 98 60 Q 84 68 72 74 Z" fill="#15803D" />
+
+              {/* Unfurling young fiddlehead curls (拳卷幼葉) at center */}
+              <path d="M 57 86 Q 54 68 50 60 Q 48 54 53 52 Q 57 54 55 58" stroke="#86EFAC" strokeWidth="2.2" fill="none" />
+              <path d="M 63 86 Q 66 70 70 63 Q 73 57 69 55 Q 65 57 67 61" stroke="#4ADE80" strokeWidth="2" fill="none" />
+            </g>
           </defs>
 
           {/* Distant volcanic glow at the horizon */}
@@ -348,6 +386,16 @@ export const Stage4Game: React.FC<Stage4GameProps> = ({ onStagePass, onRestartAl
             <polygon points="16,18 7,10 20,28" />
             <polygon points="50,18 59,10 46,28" />
           </g>
+
+          {/* Prehistoric Fern Plant Bushes (白堊紀蕨類植物草叢分布於泥土地各處) */}
+          <use href="#prehistoricFernClump" transform="translate(15, 540) scale(1.35)" />
+          <use href="#prehistoricFernClump" transform="translate(850, 530) scale(1.3) scale(-1, 1)" />
+          <use href="#prehistoricFernClump" transform="translate(100, 370) scale(0.95)" />
+          <use href="#prehistoricFernClump" transform="translate(730, 310) scale(1.0) scale(-1, 1)" />
+          <use href="#prehistoricFernClump" transform="translate(560, 530) scale(0.85)" />
+          <use href="#prehistoricFernClump" transform="translate(860, 210) scale(0.75) scale(-1, 1)" />
+          <use href="#prehistoricFernClump" transform="translate(30, 260) scale(0.8)" />
+          <use href="#prehistoricFernClump" transform="translate(350, 430) scale(0.85)" />
 
           {/* Distant ancient giant ferns silhouette on left & right */}
           <path d="M 0 300 Q 80 260 140 310 Q 70 320 0 350 Z" fill="url(#fernBgGrad)" />
